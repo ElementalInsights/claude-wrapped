@@ -1,0 +1,14 @@
+{
+  "name": "claude-wrapped",
+  "version": "0.1.0",
+  "description": "Spotify Wrapped for your Claude Code sessions",
+  "type": "module",
+  "bin": {
+    "claude-wrapped": "./bin/cli.mjs"
+  },
+  "scripts": {
+    "start": "node bin/cli.mjs"
+  },
+  "keywords": ["claude", "claude-code", "ai", "developer-tools", "visualization"],
+  "license": "MIT"
+}
