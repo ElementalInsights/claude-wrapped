@@ -296,16 +296,43 @@ footer a:hover{color:var(--text)}
 
 /* ACHIEVEMENTS */
 .ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
-.ach-card{background:var(--surface);border:1px solid var(--tier-color,var(--border));border-radius:12px;padding:24px;box-shadow:0 0 24px var(--tier-glow,transparent);position:relative;overflow:hidden}
+.ach-card{background:var(--surface);border:1px solid var(--tier-color,var(--border));border-radius:12px;padding:24px;box-shadow:0 0 24px var(--tier-glow,transparent);position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.ach-card:hover{transform:translateY(-2px);box-shadow:0 0 36px var(--tier-glow,transparent),0 4px 16px rgba(0,0,0,.3)}
 .ach-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tier-color,var(--green))}
+.ach-card.locked{border-color:var(--border);box-shadow:none;opacity:.45;filter:grayscale(.6)}
+.ach-card.locked::before{background:var(--border)}
+.ach-card.locked:hover{transform:translateY(-1px);opacity:.6;filter:grayscale(.4)}
 .ach-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
 .ach-icon{font-size:28px}
 .ach-tier{font-size:10px;font-weight:700;letter-spacing:.15em;color:var(--tier-color);font-family:'SF Mono','Cascadia Code',monospace;padding:3px 8px;border:1px solid var(--tier-color);border-radius:4px;opacity:.85}
+.ach-locked-badge{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace;padding:3px 8px;border:1px solid var(--border);border-radius:4px}
 .ach-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px}
 .ach-stat{font-size:22px;font-weight:700;font-family:'SF Mono','Cascadia Code',monospace;color:var(--tier-color);margin-bottom:10px}
+.ach-card.locked .ach-stat{color:var(--dim)}
 .ach-flavor{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:8px}
 .ach-baseline{font-size:11px;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace}
 .ach-note{font-size:12px;color:var(--dim);margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+/* Achievement popup modal */
+#ach-modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#ach-modal.open{opacity:1;pointer-events:all}
+#ach-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px)}
+#ach-modal-box{position:relative;background:#13162a;border:1px solid var(--border);border-radius:16px;padding:32px;width:min(480px,90vw);z-index:1;transform:scale(.93) translateY(12px);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+#ach-modal.open #ach-modal-box{transform:scale(1) translateY(0)}
+#ach-modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
+#ach-modal-close:hover{color:var(--text);background:var(--surface)}
+.am-icon{font-size:40px;margin-bottom:12px}
+.am-name{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.am-your-stat{font-size:14px;color:var(--muted);margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.am-your-stat strong{color:var(--text)}
+.am-tiers{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.am-tier-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;border:1px solid transparent;font-size:13px}
+.am-tier-row.reached{border-color:var(--row-color);background:color-mix(in srgb,var(--row-color) 8%,transparent)}
+.am-tier-row.current{border-color:var(--row-color);background:color-mix(in srgb,var(--row-color) 15%,transparent);font-weight:600}
+.am-tier-emoji{font-size:18px;width:24px;text-align:center}
+.am-tier-label{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--row-color);font-family:monospace;width:64px}
+.am-tier-min{flex:1;color:var(--muted);font-family:monospace;font-size:12px}
+.am-tier-check{color:var(--row-color);font-size:15px;margin-left:auto}
+.am-baseline{font-size:12px;color:var(--dim);font-family:monospace}
 
 /* TOOLTIP */
 #tip{position:fixed;pointer-events:none;background:#1a1d2e;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--muted);z-index:999;opacity:0;transition:opacity .15s;min-width:160px}
@@ -466,21 +493,38 @@ ${projects.length > 1 ? `
 </section>
 
 ${achievements.length > 0 ? `
+<!-- Achievement popup modal -->
+<div id="ach-modal">
+  <div id="ach-modal-backdrop"></div>
+  <div id="ach-modal-box">
+    <button id="ach-modal-close" aria-label="Close">✕</button>
+    <div class="am-icon" id="am-icon"></div>
+    <div class="am-name" id="am-name"></div>
+    <div class="am-your-stat" id="am-your-stat"></div>
+    <div class="am-tiers" id="am-tiers"></div>
+    <div class="am-baseline" id="am-baseline"></div>
+  </div>
+</div>
+
 <section class="section" id="ach-section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container-wide">
     <div class="section-eyebrow">Achievements</div>
-    <div class="section-title">${achievements.length} unlocked</div>
-    <div class="section-desc">Stacked against estimated 2026 community baselines for active Claude Code users.</div>
+    <div class="section-title">${achievements.filter(a => a.unlocked).length} / ${achievements.length} unlocked</div>
+    <div class="section-desc">Stacked against estimated 2026 community baselines. Click any card to see the tier breakdown.</div>
     <div class="ach-grid">
       ${achievements.map(a => `
-      <div class="ach-card reveal" style="--tier-color:${a.tierColor};--tier-glow:${a.tierGlow}">
+      <div class="ach-card reveal${a.unlocked ? '' : ' locked'}"
+           style="--tier-color:${a.tierColor};--tier-glow:${a.tierGlow}"
+           data-ach='${JSON.stringify({ id: a.id, name: a.name, emoji: a.emoji, stat: a.stat, flavor: a.flavor, baseline: a.baseline, rawValue: a.rawValue, unlocked: a.unlocked, tiers: a.tiers }).replace(/'/g, "&#39;")}'>
         <div class="ach-header">
           <div class="ach-icon">${a.emoji}</div>
-          <div class="ach-tier">${a.tierLabel.toUpperCase()}</div>
+          ${a.unlocked
+            ? `<div class="ach-tier">${a.tierLabel.toUpperCase()}</div>`
+            : `<div class="ach-locked-badge">LOCKED</div>`}
         </div>
         <div class="ach-name">${a.name}</div>
-        <div class="ach-stat">${a.stat}</div>
-        <div class="ach-flavor">${a.flavor}</div>
+        <div class="ach-stat">${a.unlocked ? a.stat : a.tiers[0].minLabel}</div>
+        <div class="ach-flavor">${a.unlocked ? a.flavor : 'Click to see what it takes to unlock this.'}</div>
         <div class="ach-baseline">${a.baseline}</div>
       </div>`).join('')}
     </div>
@@ -646,13 +690,63 @@ document.querySelectorAll('.reveal').forEach(el=>{
     scrollTrigger:{trigger:el,start:'top 88%',once:true}});
 });
 
-// ── Achievement cards ────────────────────────────────────────────────────────
+// ── Achievement cards + popup ─────────────────────────────────────────────────
 if(document.getElementById('ach-section')){
   const g=document.querySelector('#ach-section .ach-grid');
   if(g) gsap.fromTo(g.querySelectorAll('.reveal'),
     {opacity:0,y:28,scale:.97},
     {opacity:1,y:0,scale:1,duration:.55,stagger:.09,ease:'back.out(1.4)',
      scrollTrigger:{trigger:g,start:'top 85%',once:true}});
+
+  // Popup modal
+  const modal    = document.getElementById('ach-modal');
+  const backdrop = document.getElementById('ach-modal-backdrop');
+  const closeBtn = document.getElementById('ach-modal-close');
+  const TIER_ORDER = ['bronze','silver','gold','platinum'];
+  const TIER_EMOJI = {bronze:'🥉',silver:'🥈',gold:'🥇',platinum:'💎'};
+
+  function openModal(data){
+    document.getElementById('am-icon').textContent  = data.emoji;
+    document.getElementById('am-name').textContent  = data.name;
+    document.getElementById('am-baseline').textContent = data.baseline;
+    const statEl = document.getElementById('am-your-stat');
+    statEl.innerHTML = data.unlocked
+      ? 'Your score: <strong>'+data.stat+'</strong>'
+      : 'Not yet unlocked — here\'s what you need:';
+
+    const tiersEl = document.getElementById('am-tiers');
+    tiersEl.innerHTML = '';
+    (data.tiers || []).forEach(row => {
+      const reached  = data.rawValue >= row.min;
+      const isCurrent = data.unlocked && row.key === data.tiers
+        .slice().reverse().find(r => data.rawValue >= r.min)?.key;
+      const div = document.createElement('div');
+      div.className = 'am-tier-row'+(reached?' reached':'')+(isCurrent?' current':'');
+      div.style.setProperty('--row-color', row.color);
+      div.innerHTML =
+        '<span class="am-tier-emoji">'+TIER_EMOJI[row.key]+'</span>'+
+        '<span class="am-tier-label">'+row.label.toUpperCase()+'</span>'+
+        '<span class="am-tier-min">'+row.minLabel+'</span>'+
+        (reached ? '<span class="am-tier-check">✓</span>' : '');
+      tiersEl.appendChild(div);
+    });
+    modal.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+
+  function closeModal(){
+    modal.classList.remove('open');
+    document.body.style.overflow='';
+  }
+
+  document.querySelectorAll('.ach-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      try{ openModal(JSON.parse(card.dataset.ach)); }catch(e){}
+    });
+  });
+  backdrop.addEventListener('click', closeModal);
+  closeBtn.addEventListener('click',  closeModal);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
 }
 
 // ── Project bars ─────────────────────────────────────────────────────────────

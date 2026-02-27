@@ -165,7 +165,8 @@ const stats       = analyze(allSessions, { projectSessions, redact });
 const comparisons = getComparisons(stats);
 
 const achievements = getAchievements(stats);
-console.log(`  ${achievements.length} achievement${achievements.length !== 1 ? 's' : ''} unlocked`);
+const unlockedCount = achievements.filter(a => a.unlocked).length;
+console.log(`  ${unlockedCount} / ${achievements.length} achievements unlocked`);
 
 console.log(`  Rendering...`);
 const html = render(stats, comparisons, config, achievements);
