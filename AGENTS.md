@@ -75,6 +75,13 @@ package.json          Zero runtime deps. "type": "module".
   // Rhythm data (derived from session startTime)
   messagesByHour: number[24],    // index = hour (0–23)
   messagesByDow:  number[7],     // index = day (0=Mon … 6=Sun)
+
+  // Achievement / share stats
+  uniqueToolCount:  number,      // distinct tool names used across all sessions
+  uniqueExtensions: number,      // distinct file extensions edited (pre-redaction)
+  totalFilesEdited: number,      // total unique filenames edited
+  totalApiErrors:   number,      // sum of apiErrors across sessions
+  maxSessionMsgs:   number,      // highest message count in a single session
 }
 ```
 
@@ -164,12 +171,13 @@ export const linesWrittenComparisons = [
 - **Read-only access to user data** — never write to `~/.claude/` or any source directory.
 - **Wrap JSON.parse in try/catch** — malformed lines must be skipped, not crash the process.
 - **Redact by default** — `analyze()` takes `{ redact: true }` (default). File names → `file-N.ext`, project names → `Project A/B/C`, session slugs → null. Pass `redact: false` only when `--no-redact` is set.
+- **Template literal JS string escaping** — `\n` and `\'` inside JS strings embedded in the template literal are consumed by the template literal parser, producing a literal newline or `'` in the HTML output (breaks inline JS). Use `\\n` to get a `\n` in the output, or `const NL='\\n'` and concatenate. Use double-quoted strings or `\\u0027` instead of `\'`.
 
 ---
 
 ## Page sections (in order)
 
-1. **Hero** — animated count-up stats row + comparison pill
+1. **Hero** — animated count-up stats row + comparison pill + two share buttons: `📊 Share benchmark data` (opens modal with copy/Discussion/card) and `🖼️ Download share card` (Canvas PNG at 2× DPR)
 2. **Your Average Day** — 6 metric cards (compute hrs, messages, resets, MB, longest/avg turn)
 3. **By Project** — horizontal bars per project with 4 stats *(hidden when ≤1 project)*
 4. **The Context Pulse** — SVG bar chart; bars reveal via clipPath as playhead sweeps (default 2× speed)

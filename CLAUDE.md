@@ -95,6 +95,13 @@
   // Coding rhythm (derived from session startTime — hour/day sessions began)
   messagesByHour: number[24],   // index = hour of day (0–23, local time)
   messagesByDow:  number[7],    // index = day of week (0=Mon … 6=Sun)
+
+  // Achievement / share stats
+  uniqueToolCount:    number,   // distinct tool names used across all sessions
+  uniqueExtensions:   number,   // distinct file extensions edited (pre-redaction)
+  totalFilesEdited:   number,   // total unique filenames edited
+  totalApiErrors:     number,   // sum of apiErrors across sessions
+  maxSessionMsgs:     number,   // highest message count in a single session
 }
 ```
 

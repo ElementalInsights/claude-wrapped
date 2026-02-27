@@ -20,6 +20,7 @@ No server. No account. No dependencies. One command.
 │  ✦ Animated hero stats                                  │
 │    Sessions · Messages · Context resets · GB generated  │
 │    Lines written · Fun comparison pill                  │
+│    📊 Share benchmark data  ·  🖼️ Download share card   │
 │                                                         │
 │  ✦ Your Average Day                                     │
 │    6 cards: compute hours, messages, resets/day,        │
@@ -39,20 +40,18 @@ No server. No account. No dependencies. One command.
 │    (5 comparison cards, thresholds fully editable)      │
 │                                                         │
 │  ✦ Achievements (Steam-style)                           │
-│    Bronze / Silver / Gold / Platinum tiers              │
+│    12 achievements · Bronze / Silver / Gold / Platinum  │
+│    All 12 shown — locked ones dimmed                    │
+│    Click any card for full tier breakdown               │
 │    Compared to estimated 2026 community baselines       │
-│    7 unlockable achievements across key metrics         │
 │                                                         │
 │  ✦ Coding Rhythm                                        │
 │    GitHub-style activity calendar                       │
 │    Hour-of-day heatmap · Day-of-week bars               │
 │    Night Owl / Early Bird / Evening Coder badge         │
 │                                                         │
-│  ✦ Tool Call Breakdown                                  │
-│    Top tool calls by count                              │
-│                                                         │
-│  ✦ Most Edited Files (anonymised by default)            │
-│    Files you kept coming back to                        │
+│  ✦ Tool Call Breakdown + Most Edited Files              │
+│    Top tools by count · Files you kept coming back to   │
 └─────────────────────────────────────────────────────────┘
 ```
 

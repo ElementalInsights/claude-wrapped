@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AthenaForms — Full Build · Claude Wrapped</title>
-<meta property="og:title" content="AthenaForms — Full Build · Claude Wrapped">
-<meta property="og:description" content="53 sessions. 435 context resets. 680,238 lines written.">
+<title>My Project · Claude Wrapped</title>
+<meta property="og:title" content="My Project · Claude Wrapped">
+<meta property="og:description" content="55 sessions. 460 context resets. 752,427 lines written.">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 html{zoom:1.1}
@@ -145,6 +145,67 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
 footer a{color:var(--dim);text-decoration:none}
 footer a:hover{color:var(--text)}
 
+/* ACHIEVEMENTS */
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.ach-card{background:var(--surface);border:1px solid var(--tier-color,var(--border));border-radius:12px;padding:24px;box-shadow:0 0 24px var(--tier-glow,transparent);position:relative;overflow:hidden;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.ach-card:hover{transform:translateY(-2px);box-shadow:0 0 36px var(--tier-glow,transparent),0 4px 16px rgba(0,0,0,.3)}
+.ach-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tier-color,var(--green))}
+.ach-card.locked{border-color:var(--border);box-shadow:none;opacity:.45;filter:grayscale(.6)}
+.ach-card.locked::before{background:var(--border)}
+.ach-card.locked:hover{transform:translateY(-1px);opacity:.6;filter:grayscale(.4)}
+.ach-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.ach-icon{font-size:28px}
+.ach-tier{font-size:10px;font-weight:700;letter-spacing:.15em;color:var(--tier-color);font-family:'SF Mono','Cascadia Code',monospace;padding:3px 8px;border:1px solid var(--tier-color);border-radius:4px;opacity:.85}
+.ach-locked-badge{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace;padding:3px 8px;border:1px solid var(--border);border-radius:4px}
+.ach-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px}
+.ach-stat{font-size:22px;font-weight:700;font-family:'SF Mono','Cascadia Code',monospace;color:var(--tier-color);margin-bottom:10px}
+.ach-card.locked .ach-stat{color:var(--dim)}
+.ach-flavor{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.ach-baseline{font-size:11px;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace}
+.ach-note{font-size:12px;color:var(--dim);margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+/* Hero share button */
+.hero-share-btn{background:transparent;border:1px solid rgba(74,222,128,.25);border-radius:20px;color:var(--dim);font-size:12px;font-weight:500;padding:6px 16px;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.04em;margin-top:18px;display:inline-flex;align-items:center;gap:6px}
+.hero-share-btn:hover{border-color:var(--green);color:var(--green);background:rgba(74,222,128,.06)}
+/* Share benchmark modal */
+#share-modal{position:fixed;inset:0;z-index:1001;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#share-modal.open{opacity:1;pointer-events:all}
+#share-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+#share-modal-box{position:relative;background:#13162a;border:1px solid var(--border);border-radius:16px;padding:28px 32px;width:min(540px,92vw);z-index:1;transform:scale(.93) translateY(12px);transition:transform .25s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto}
+#share-modal.open #share-modal-box{transform:scale(1) translateY(0)}
+#share-modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
+#share-modal-close:hover{color:var(--text);background:var(--surface)}
+.sm-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:5px}
+.sm-subtitle{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.sm-code{background:#0c0e1a;border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-family:'SF Mono','Cascadia Code',monospace;font-size:11.5px;color:#94a3b8;line-height:1.65;white-space:pre;overflow-x:auto;margin-bottom:14px}
+.sm-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sm-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit;white-space:nowrap}
+.sm-btn-copy{background:var(--green);color:#0a0d1a}
+.sm-btn-copy:hover{background:#86efac}
+.sm-btn-secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.sm-btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+.sm-copied{font-size:11px;color:var(--green);opacity:0;transition:opacity .3s}
+/* Achievement popup modal */
+#ach-modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#ach-modal.open{opacity:1;pointer-events:all}
+#ach-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px)}
+#ach-modal-box{position:relative;background:#13162a;border:1px solid var(--border);border-radius:16px;padding:32px;width:min(480px,90vw);z-index:1;transform:scale(.93) translateY(12px);transition:transform .25s cubic-bezier(.34,1.56,.64,1)}
+#ach-modal.open #ach-modal-box{transform:scale(1) translateY(0)}
+#ach-modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
+#ach-modal-close:hover{color:var(--text);background:var(--surface)}
+.am-icon{font-size:40px;margin-bottom:12px}
+.am-name{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
+.am-your-stat{font-size:14px;color:var(--muted);margin-bottom:24px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+.am-your-stat strong{color:var(--text)}
+.am-tiers{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.am-tier-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:8px;border:1px solid transparent;font-size:13px}
+.am-tier-row.reached{border-color:var(--row-color);background:color-mix(in srgb,var(--row-color) 8%,transparent)}
+.am-tier-row.current{border-color:var(--row-color);background:color-mix(in srgb,var(--row-color) 15%,transparent);font-weight:600}
+.am-tier-emoji{font-size:18px;width:24px;text-align:center}
+.am-tier-label{font-size:11px;font-weight:700;letter-spacing:.12em;color:var(--row-color);font-family:monospace;width:64px}
+.am-tier-min{flex:1;color:var(--muted);font-family:monospace;font-size:12px}
+.am-tier-check{color:var(--row-color);font-size:15px;margin-left:auto}
+.am-baseline{font-size:12px;color:var(--dim);font-family:monospace}
+
 /* TOOLTIP */
 #tip{position:fixed;pointer-events:none;background:#1a1d2e;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--muted);z-index:999;opacity:0;transition:opacity .15s;min-width:160px}
 .tn{font-weight:600;color:var(--text);margin-bottom:4px;font-family:'SF Mono','Cascadia Code',monospace;font-size:12px}
@@ -159,14 +220,30 @@ footer a:hover{color:var(--text)}
 
 <nav id="nav">
   <span class="nav-brand">claude-wrapped</span>
-  <span class="nav-sub">AthenaForms — Full Build · 2026-02-02 → 2026-02-27</span>
+  <span class="nav-sub">My Project · 2026-01-30 → 2026-02-27</span>
 </nav>
+
+<!-- Share benchmark modal (always rendered) -->
+<div id="share-modal">
+  <div id="share-modal-backdrop"></div>
+  <div id="share-modal-box">
+    <button id="share-modal-close" aria-label="Close">✕</button>
+    <div class="sm-title">📊 Share your benchmark data</div>
+    <div class="sm-subtitle">Help calibrate community thresholds — anonymous aggregate counts only. No code, filenames, or conversation content.</div>
+    <div class="sm-code" id="sm-code-block"></div>
+    <div class="sm-actions">
+      <button class="sm-btn sm-btn-copy" id="sm-copy-btn">📋 Copy</button>
+      <button class="sm-btn sm-btn-secondary" id="sm-discuss-btn">💬 Discussion</button>
+      <span class="sm-copied" id="sm-copied">Copied!</span>
+    </div>
+  </div>
+</div>
 
 <section class="hero">
   <div class="container">
     <div class="eyebrow">Claude Wrapped</div>
-    <h1>AthenaForms — Full Build<br><span>by the numbers.</span></h1>
-    <p class="hero-sub">53 sessions. 435 context resets. 680,238 lines written.</p>
+    <h1>My Project<br><span>by the numbers.</span></h1>
+    <p class="hero-sub">55 sessions. 460 context resets. 752,427 lines written.</p>
     <div class="stats-row">
       <div class="stat"><div class="stat-val g" id="s1">0</div><div class="stat-lbl">Sessions</div></div>
       <div class="stat"><div class="stat-val"   id="s2">0</div><div class="stat-lbl">Messages</div></div>
@@ -175,6 +252,10 @@ footer a:hover{color:var(--text)}
       <div class="stat"><div class="stat-val p" id="s5">0</div><div class="stat-lbl">Lines Written</div></div>
     </div>
     <div class="pill" id="pill0"><span>⚔️ That's roughly as many words as War and Peace</span></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="hero-share-btn" id="share-bench-btn">📊 Share benchmark data</button>
+      <button class="hero-share-btn" id="hero-card-btn">🖼️ Download share card</button>
+    </div>
   </div>
 </section>
 
@@ -185,23 +266,23 @@ footer a:hover{color:var(--text)}
     <div class="grid-3" id="day-grid">
       <div class="day-card reveal" style="--c:var(--green)">
         <div class="day-emoji">☕</div>
-        <div class="day-headline">5.4 hours of Claude <strong>actively thinking</strong> every day. Not wall clock.</div>
-        <div class="day-stat">5.4 hrs compute/day</div>
+        <div class="day-headline">5.2 hours of Claude <strong>actively thinking</strong> every day. Not wall clock.</div>
+        <div class="day-stat">5.2 hrs compute/day</div>
       </div>
       <div class="day-card reveal" style="--c:var(--cyan)">
         <div class="day-emoji">💬</div>
-        <div class="day-headline"><strong>5,311 messages</strong> exchanged every single day.</div>
-        <div class="day-stat">5,311 messages/day</div>
+        <div class="day-headline"><strong>5,086 messages</strong> exchanged every single day.</div>
+        <div class="day-stat">5,086 messages/day</div>
       </div>
       <div class="day-card reveal" style="--c:var(--yellow)">
         <div class="day-emoji">🧠</div>
-        <div class="day-headline"><strong>Total amnesia 17.4× a day.</strong> Picked right back up every time.</div>
-        <div class="day-stat">17.4× context resets/day</div>
+        <div class="day-headline"><strong>Total amnesia 16.4× a day.</strong> Picked right back up every time.</div>
+        <div class="day-stat">16.4× context resets/day</div>
       </div>
       <div class="day-card reveal" style="--c:var(--purple)">
         <div class="day-emoji">📚</div>
-        <div class="day-headline"><strong>38.5 MB</strong> of conversation data generated every single day.</div>
-        <div class="day-stat">38.5 MB context/day</div>
+        <div class="day-headline"><strong>36.4 MB</strong> of conversation data generated every single day.</div>
+        <div class="day-stat">36.4 MB context/day</div>
       </div>
       <div class="day-card reveal" style="--c:var(--pink)">
         <div class="day-emoji">⏱️</div>
@@ -226,22 +307,22 @@ footer a:hover{color:var(--text)}
     
     <div class="proj-row reveal">
       <div class="proj-row-head">
-        <span class="proj-row-name">Project A</span>
-        <span class="proj-row-msgs">116,868 messages</span>
+        <span class="proj-row-name">Project C</span>
+        <span class="proj-row-msgs">117,284 messages</span>
       </div>
       <div class="proj-bar-track">
         <div class="proj-bar-fill" data-w="100" style="background:var(--green)"></div>
       </div>
       <div class="proj-row-stats">
         <div><span class="proj-chip-val">45</span><span class="proj-chip-lbl">Sessions</span></div>
-        <div><span class="proj-chip-val">395</span><span class="proj-chip-lbl">Resets</span></div>
-        <div><span class="proj-chip-val">591,701</span><span class="proj-chip-lbl">Lines</span></div>
-        <div><span class="proj-chip-val">121.7h</span><span class="proj-chip-lbl">Compute</span></div>
+        <div><span class="proj-chip-val">396</span><span class="proj-chip-lbl">Resets</span></div>
+        <div><span class="proj-chip-val">593,249</span><span class="proj-chip-lbl">Lines</span></div>
+        <div><span class="proj-chip-val">122.3h</span><span class="proj-chip-lbl">Compute</span></div>
       </div>
     </div>
     <div class="proj-row reveal">
       <div class="proj-row-head">
-        <span class="proj-row-name">Project B</span>
+        <span class="proj-row-name">Project D</span>
         <span class="proj-row-msgs">15,600 messages</span>
       </div>
       <div class="proj-bar-track">
@@ -256,11 +337,26 @@ footer a:hover{color:var(--text)}
     </div>
     <div class="proj-row reveal">
       <div class="proj-row-head">
-        <span class="proj-row-name">Project D</span>
+        <span class="proj-row-name">Project E</span>
+        <span class="proj-row-msgs">9,217 messages</span>
+      </div>
+      <div class="proj-bar-track">
+        <div class="proj-bar-fill" data-w="8" style="background:var(--yellow)"></div>
+      </div>
+      <div class="proj-row-stats">
+        <div><span class="proj-chip-val">2</span><span class="proj-chip-lbl">Sessions</span></div>
+        <div><span class="proj-chip-val">24</span><span class="proj-chip-lbl">Resets</span></div>
+        <div><span class="proj-chip-val">70,641</span><span class="proj-chip-lbl">Lines</span></div>
+        <div><span class="proj-chip-val">9.6h</span><span class="proj-chip-lbl">Compute</span></div>
+      </div>
+    </div>
+    <div class="proj-row reveal">
+      <div class="proj-row-head">
+        <span class="proj-row-name">Project B</span>
         <span class="proj-row-msgs">246 messages</span>
       </div>
       <div class="proj-bar-track">
-        <div class="proj-bar-fill" data-w="0" style="background:var(--yellow)"></div>
+        <div class="proj-bar-fill" data-w="0" style="background:var(--purple)"></div>
       </div>
       <div class="proj-row-stats">
         <div><span class="proj-chip-val">1</span><span class="proj-chip-lbl">Sessions</span></div>
@@ -271,11 +367,11 @@ footer a:hover{color:var(--text)}
     </div>
     <div class="proj-row reveal">
       <div class="proj-row-head">
-        <span class="proj-row-name">Project C</span>
+        <span class="proj-row-name">Project A</span>
         <span class="proj-row-msgs">51 messages</span>
       </div>
       <div class="proj-bar-track">
-        <div class="proj-bar-fill" data-w="0" style="background:var(--purple)"></div>
+        <div class="proj-bar-fill" data-w="0" style="background:var(--pink)"></div>
       </div>
       <div class="proj-row-stats">
         <div><span class="proj-chip-val">1</span><span class="proj-chip-lbl">Sessions</span></div>
@@ -295,7 +391,7 @@ footer a:hover{color:var(--text)}
     <div class="player" id="player-wrap">
       <div class="player-top">
         <div class="player-info">
-          <span id="pl-num" style="color:var(--text);font-weight:600">Session 1 / 53</span>
+          <span id="pl-num" style="color:var(--text);font-weight:600">Session 1 / 55</span>
           &nbsp;·&nbsp;<span id="pl-resets">0</span> resets
           &nbsp;·&nbsp;<span id="pl-size">0</span> MB
           &nbsp;·&nbsp;<span id="pl-msgs">0</span> messages
@@ -335,25 +431,25 @@ footer a:hover{color:var(--text)}
       
       <div class="cmp-card reveal">
         <div class="cmp-emoji">⚔️</div>
-        <div class="cmp-stat">680,238</div>
+        <div class="cmp-stat">752,427</div>
         <div class="cmp-label">lines of code written</div>
         <div class="cmp-compare">That's roughly as many words as War and Peace</div>
       </div>
       <div class="cmp-card reveal">
         <div class="cmp-emoji">💊</div>
-        <div class="cmp-stat">132,765</div>
+        <div class="cmp-stat">142,398</div>
         <div class="cmp-label">total messages</div>
         <div class="cmp-compare">more than the scripts of all three Matrix films — every single day</div>
       </div>
       <div class="cmp-card reveal">
         <div class="cmp-emoji">📅</div>
-        <div class="cmp-stat">435</div>
+        <div class="cmp-stat">460</div>
         <div class="cmp-label">context resets</div>
         <div class="cmp-compare">Claude got total amnesia more times than there are days in a year</div>
       </div>
       <div class="cmp-card reveal">
         <div class="cmp-emoji">✈️</div>
-        <div class="cmp-stat">136 hrs</div>
+        <div class="cmp-stat">146 hrs</div>
         <div class="cmp-label">total AI compute time</div>
         <div class="cmp-compare">enough to fly from New York to London. Twice.</div>
       </div>
@@ -367,6 +463,175 @@ footer a:hover{color:var(--text)}
   </div>
 </section>
 
+<!-- Achievement popup modal -->
+<div id="ach-modal">
+  <div id="ach-modal-backdrop"></div>
+  <div id="ach-modal-box">
+    <button id="ach-modal-close" aria-label="Close">✕</button>
+    <div class="am-icon" id="am-icon"></div>
+    <div class="am-name" id="am-name"></div>
+    <div class="am-your-stat" id="am-your-stat"></div>
+    <div class="am-tiers" id="am-tiers"></div>
+    <div class="am-baseline" id="am-baseline"></div>
+  </div>
+</div>
+
+<section class="section" id="ach-section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container-wide">
+    <div class="section-eyebrow">Achievements</div>
+    <div class="section-title">11 / 12 unlocked</div>
+    <div class="section-desc">Stacked against estimated 2026 community baselines. Click any card to see the tier breakdown.</div>
+    <div class="ach-grid">
+      
+      <div class="ach-card reveal"
+           style="--tier-color:#b9f2ff;--tier-glow:rgba(185,242,255,0.18)"
+           data-ach='{"id":"msgs","name":"The Conversationalist","emoji":"💬","stat":"5,086 msgs / day","flavor":"102× the typical dev&#39;s daily message volume.","baseline":"Community avg: ~50 msgs/day","rawValue":5086,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":75,"minLabel":"≥ 75 msgs/day"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":160,"minLabel":"≥ 160 msgs/day"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":400,"minLabel":"≥ 400 msgs/day"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":800,"minLabel":"≥ 800 msgs/day"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">💬</div>
+          <div class="ach-tier">PLATINUM</div>
+        </div>
+        <div class="ach-name">The Conversationalist</div>
+        <div class="ach-stat">5,086 msgs / day</div>
+        <div class="ach-flavor">102× the typical dev's daily message volume.</div>
+        <div class="ach-baseline">Community avg: ~50 msgs/day</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#b9f2ff;--tier-glow:rgba(185,242,255,0.18)"
+           data-ach='{"id":"lines","name":"Ghost Writer","emoji":"✍️","stat":"752,427 lines","flavor":"That&#39;s ~6.5 War & Peace novels worth of code.","baseline":"Community avg: ~5,000 lines","rawValue":752427,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":10000,"minLabel":"≥ 10k lines"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":50000,"minLabel":"≥ 50k lines"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":100000,"minLabel":"≥ 100k lines"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":500000,"minLabel":"≥ 500k lines"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">✍️</div>
+          <div class="ach-tier">PLATINUM</div>
+        </div>
+        <div class="ach-name">Ghost Writer</div>
+        <div class="ach-stat">752,427 lines</div>
+        <div class="ach-flavor">That's ~6.5 War & Peace novels worth of code.</div>
+        <div class="ach-baseline">Community avg: ~5,000 lines</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#b9f2ff;--tier-glow:rgba(185,242,255,0.18)"
+           data-ach='{"id":"polyglot","name":"The Polyglot","emoji":"🌐","stat":"22 file types","flavor":"You touched 22 distinct file extensions. That&#39;s a full-stack mind.","baseline":"Most projects: 3–6 file types","rawValue":22,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":5,"minLabel":"≥ 5 unique extensions"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":10,"minLabel":"≥ 10 unique extensions"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":15,"minLabel":"≥ 15 unique extensions"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":20,"minLabel":"≥ 20 unique extensions"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">🌐</div>
+          <div class="ach-tier">PLATINUM</div>
+        </div>
+        <div class="ach-name">The Polyglot</div>
+        <div class="ach-stat">22 file types</div>
+        <div class="ach-flavor">You touched 22 distinct file extensions. That's a full-stack mind.</div>
+        <div class="ach-baseline">Most projects: 3–6 file types</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#b9f2ff;--tier-glow:rgba(185,242,255,0.18)"
+           data-ach='{"id":"marathon","name":"Session Marathon","emoji":"🏃","stat":"12,423 msgs, 1 session","flavor":"12423 messages in a single session. Did you sleep?","baseline":"Typical session: 20–60 messages","rawValue":12423,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":100,"minLabel":"≥ 100 msgs in one session"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":250,"minLabel":"≥ 250 msgs in one session"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":500,"minLabel":"≥ 500 msgs in one session"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":1000,"minLabel":"≥ 1,000 msgs in one session"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">🏃</div>
+          <div class="ach-tier">PLATINUM</div>
+        </div>
+        <div class="ach-name">Session Marathon</div>
+        <div class="ach-stat">12,423 msgs, 1 session</div>
+        <div class="ach-flavor">12423 messages in a single session. Did you sleep?</div>
+        <div class="ach-baseline">Typical session: 20–60 messages</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#b9f2ff;--tier-glow:rgba(185,242,255,0.18)"
+           data-ach='{"id":"tools","name":"Tool Junkie","emoji":"🔧","stat":"40 tools used","flavor":"You reached for 40 different Claude tools. Power user confirmed.","baseline":"Casual users: 3–5 tools","rawValue":40,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":5,"minLabel":"≥ 5 unique tools"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":8,"minLabel":"≥ 8 unique tools"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":11,"minLabel":"≥ 11 unique tools"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":14,"minLabel":"≥ 14 unique tools"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">🔧</div>
+          <div class="ach-tier">PLATINUM</div>
+        </div>
+        <div class="ach-name">Tool Junkie</div>
+        <div class="ach-stat">40 tools used</div>
+        <div class="ach-flavor">You reached for 40 different Claude tools. Power user confirmed.</div>
+        <div class="ach-baseline">Casual users: 3–5 tools</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#b9f2ff;--tier-glow:rgba(185,242,255,0.18)"
+           data-ach='{"id":"files","name":"The Editor","emoji":"📝","stat":"1,458 files","flavor":"1458 unique files edited. The codebase knows your name.","baseline":"Small project: 10–30 files","rawValue":1458,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":25,"minLabel":"≥ 25 unique files edited"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":100,"minLabel":"≥ 100 unique files edited"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":300,"minLabel":"≥ 300 unique files edited"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":1000,"minLabel":"≥ 1,000 unique files edited"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">📝</div>
+          <div class="ach-tier">PLATINUM</div>
+        </div>
+        <div class="ach-name">The Editor</div>
+        <div class="ach-stat">1,458 files</div>
+        <div class="ach-flavor">1458 unique files edited. The codebase knows your name.</div>
+        <div class="ach-baseline">Small project: 10–30 files</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#ffd700;--tier-glow:rgba(255,215,0,0.12)"
+           data-ach='{"id":"siege","name":"The Siege","emoji":"🔥","stat":"63 resets, 1 session","flavor":"Claude lost its memory 63 times mid-battle. You didn&#39;t stop.","baseline":"Community avg: ~8 resets in a hard session","rawValue":63,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":10,"minLabel":"≥ 10 resets in one session"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":20,"minLabel":"≥ 20 resets in one session"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":40,"minLabel":"≥ 40 resets in one session"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":75,"minLabel":"≥ 75 resets in one session"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">🔥</div>
+          <div class="ach-tier">GOLD</div>
+        </div>
+        <div class="ach-name">The Siege</div>
+        <div class="ach-stat">63 resets, 1 session</div>
+        <div class="ach-flavor">Claude lost its memory 63 times mid-battle. You didn't stop.</div>
+        <div class="ach-baseline">Community avg: ~8 resets in a hard session</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#ffd700;--tier-glow:rgba(255,215,0,0.12)"
+           data-ach='{"id":"daily","name":"Daily Driver","emoji":"📅","stat":"79% of days active","flavor":"22 of 28 days had at least one session. That&#39;s commitment.","baseline":"Community avg: ~49% of days (3.4/7 days/week)","rawValue":0.7857142857142857,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":0.4,"minLabel":"≥ 40% active days"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":0.55,"minLabel":"≥ 55% active days"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":0.7,"minLabel":"≥ 70% active days"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":0.86,"minLabel":"≥ 86% active days"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">📅</div>
+          <div class="ach-tier">GOLD</div>
+        </div>
+        <div class="ach-name">Daily Driver</div>
+        <div class="ach-stat">79% of days active</div>
+        <div class="ach-flavor">22 of 28 days had at least one session. That's commitment.</div>
+        <div class="ach-baseline">Community avg: ~49% of days (3.4/7 days/week)</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#ffd700;--tier-glow:rgba(255,215,0,0.12)"
+           data-ach='{"id":"turn","name":"Deep Thinker","emoji":"⏱️","stat":"48.5 min longest turn","flavor":"Claude thought for 49 minutes without stopping. That&#39;s a whole standup.","baseline":"Community avg: ~3 min typical longest turn","rawValue":48.54473333333333,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":5,"minLabel":"≥ 5 min single turn"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":15,"minLabel":"≥ 15 min single turn"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":30,"minLabel":"≥ 30 min single turn"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":60,"minLabel":"≥ 60 min single turn"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">⏱️</div>
+          <div class="ach-tier">GOLD</div>
+        </div>
+        <div class="ach-name">Deep Thinker</div>
+        <div class="ach-stat">48.5 min longest turn</div>
+        <div class="ach-flavor">Claude thought for 49 minutes without stopping. That's a whole standup.</div>
+        <div class="ach-baseline">Community avg: ~3 min typical longest turn</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#9ea0a5;--tier-glow:rgba(158,160,165,0.15)"
+           data-ach='{"id":"resets","name":"Goldfish Mode","emoji":"🧠","stat":"460 resets","flavor":"Claude forgot everything 460 times. You just kept going.","baseline":"Community avg: ~45 resets per project","rawValue":460,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":50,"minLabel":"≥ 50 total resets"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":200,"minLabel":"≥ 200 total resets"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":500,"minLabel":"≥ 500 total resets"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":1000,"minLabel":"≥ 1,000 total resets"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">🧠</div>
+          <div class="ach-tier">SILVER</div>
+        </div>
+        <div class="ach-name">Goldfish Mode</div>
+        <div class="ach-stat">460 resets</div>
+        <div class="ach-flavor">Claude forgot everything 460 times. You just kept going.</div>
+        <div class="ach-baseline">Community avg: ~45 resets per project</div>
+      </div>
+      <div class="ach-card reveal"
+           style="--tier-color:#9ea0a5;--tier-glow:rgba(158,160,165,0.15)"
+           data-ach='{"id":"compute","name":"The Grind","emoji":"⚙️","stat":"146h AI compute","flavor":"6.1 full days of pure model thinking time. Not wall clock — actual compute.","baseline":"Community avg: ~15h for a typical project","rawValue":146.30917555555556,"unlocked":true,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":20,"minLabel":"≥ 20h compute"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":75,"minLabel":"≥ 75h compute"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":150,"minLabel":"≥ 150h compute"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":500,"minLabel":"≥ 500h compute"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">⚙️</div>
+          <div class="ach-tier">SILVER</div>
+        </div>
+        <div class="ach-name">The Grind</div>
+        <div class="ach-stat">146h AI compute</div>
+        <div class="ach-flavor">6.1 full days of pure model thinking time. Not wall clock — actual compute.</div>
+        <div class="ach-baseline">Community avg: ~15h for a typical project</div>
+      </div>
+      <div class="ach-card reveal locked"
+           style="--tier-color:#475569;--tier-glow:transparent"
+           data-ach='{"id":"errors","name":"The Debugger","emoji":"🐛","stat":"3 API errors","flavor":"3 API errors. You hit the wall and kept going.","baseline":"Low-friction users: < 10 API errors","rawValue":3,"unlocked":false,"tiers":[{"key":"bronze","label":"Bronze","color":"#cd7f32","emoji":"🥉","min":10,"minLabel":"≥ 10 API errors"},{"key":"silver","label":"Silver","color":"#9ea0a5","emoji":"🥈","min":50,"minLabel":"≥ 50 API errors"},{"key":"gold","label":"Gold","color":"#ffd700","emoji":"🥇","min":150,"minLabel":"≥ 150 API errors"},{"key":"platinum","label":"Platinum","color":"#b9f2ff","emoji":"💎","min":500,"minLabel":"≥ 500 API errors"}]}'>
+        <div class="ach-header">
+          <div class="ach-icon">🐛</div>
+          <div class="ach-locked-badge">LOCKED</div>
+        </div>
+        <div class="ach-name">The Debugger</div>
+        <div class="ach-stat">≥ 10 API errors</div>
+        <div class="ach-flavor">Click to see what it takes to unlock this.</div>
+        <div class="ach-baseline">Low-friction users: < 10 API errors</div>
+      </div>
+    </div>
+    <div class="ach-note">Baselines are estimates — not official Anthropic data. As community benchmarks improve, thresholds will update.</div>
+  </div>
+</section>
+
 
 <section class="section" id="work-section" style="padding-top:0;border-top:1px solid var(--border)">
   <div class="container-wide">
@@ -377,7 +642,7 @@ footer a:hover{color:var(--text)}
     
     <div class="cal-wrap">
       <div class="cal-title">Activity Calendar</div>
-      <svg viewBox="0 0 70 116" style="width:100%;max-width:70px;display:block;overflow:visible" xmlns="http://www.w3.org/2000/svg"><text x="14" y="11" font-size="9" fill="#64748b" font-family="monospace">Feb</text><text x="0" y="27" font-size="9" fill="#475569" font-family="monospace">M</text><text x="0" y="55" font-size="9" fill="#475569" font-family="monospace">W</text><text x="0" y="83" font-size="9" fill="#475569" font-family="monospace">F</text><rect x="14" y="18" width="11" height="11" rx="2" fill="#26a641"><title>2026-02-02 · 51 msgs</title></rect><rect x="14" y="32" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-03 · 9167 msgs</title></rect><rect x="14" y="46" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-04 · 5816 msgs</title></rect><rect x="14" y="60" width="11" height="11" rx="2" fill="#12151f"><title>2026-02-05</title></rect><rect x="14" y="74" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-06 · 17071 msgs</title></rect><rect x="14" y="88" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-07 · 600 msgs</title></rect><rect x="14" y="102" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-08 · 9267 msgs</title></rect><rect x="28" y="18" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-09 · 5340 msgs</title></rect><rect x="28" y="32" width="11" height="11" rx="2" fill="#12151f"><title>2026-02-10</title></rect><rect x="28" y="46" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-11 · 9045 msgs</title></rect><rect x="28" y="60" width="11" height="11" rx="2" fill="#12151f"><title>2026-02-12</title></rect><rect x="28" y="74" width="11" height="11" rx="2" fill="#12151f"><title>2026-02-13</title></rect><rect x="28" y="88" width="11" height="11" rx="2" fill="#12151f"><title>2026-02-14</title></rect><rect x="28" y="102" width="11" height="11" rx="2" fill="#12151f"><title>2026-02-15</title></rect><rect x="42" y="18" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-16 · 14115 msgs</title></rect><rect x="42" y="32" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-17 · 1950 msgs</title></rect><rect x="42" y="46" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-18 · 3687 msgs</title></rect><rect x="42" y="60" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-19 · 11272 msgs</title></rect><rect x="42" y="74" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-20 · 7163 msgs</title></rect><rect x="42" y="88" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-21 · 246 msgs</title></rect><rect x="42" y="102" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-22 · 8609 msgs</title></rect><rect x="56" y="18" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-23 · 14180 msgs</title></rect><rect x="56" y="32" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-24 · 4345 msgs</title></rect><rect x="56" y="46" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-25 · 2402 msgs</title></rect><rect x="56" y="60" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-26 · 6762 msgs</title></rect><rect x="56" y="74" width="11" height="11" rx="2" fill="#39d353"><title>2026-02-27 · 1677 msgs</title></rect><rect x="56" y="88" width="11" height="11" rx="2" fill="#12151f"><title></title></rect><rect x="56" y="102" width="11" height="11" rx="2" fill="#12151f"><title></title></rect></svg>
+      <svg viewBox="0 0 432 132" style="width:100%;display:block;overflow:visible" xmlns="http://www.w3.org/2000/svg"><text x="16" y="11" font-size="9" fill="#64748b" font-family="monospace">Jan</text><text x="0" y="31" font-size="9" fill="#475569" font-family="monospace">M</text><text x="0" y="63" font-size="9" fill="#475569" font-family="monospace">W</text><text x="0" y="95" font-size="9" fill="#475569" font-family="monospace">F</text><rect x="16" y="20" width="13" height="13" rx="2" fill="#12151f"><title>2026-01-26</title></rect><rect x="16" y="36" width="13" height="13" rx="2" fill="#12151f"><title>2026-01-27</title></rect><rect x="16" y="52" width="13" height="13" rx="2" fill="#12151f"><title>2026-01-28</title></rect><rect x="16" y="68" width="13" height="13" rx="2" fill="#12151f"><title>2026-01-29</title></rect><rect x="16" y="84" width="13" height="13" rx="2" fill="#39d353"><title>2026-01-30 · 3949 msgs</title></rect><rect x="16" y="100" width="13" height="13" rx="2" fill="#12151f"><title>2026-01-31</title></rect><rect x="16" y="116" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-01 · 5268 msgs</title></rect><rect x="32" y="20" width="13" height="13" rx="2" fill="#26a641"><title>2026-02-02 · 51 msgs</title></rect><rect x="32" y="36" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-03 · 9167 msgs</title></rect><rect x="32" y="52" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-04 · 5816 msgs</title></rect><rect x="32" y="68" width="13" height="13" rx="2" fill="#12151f"><title>2026-02-05</title></rect><rect x="32" y="84" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-06 · 17071 msgs</title></rect><rect x="32" y="100" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-07 · 600 msgs</title></rect><rect x="32" y="116" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-08 · 9267 msgs</title></rect><rect x="48" y="20" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-09 · 5340 msgs</title></rect><rect x="48" y="36" width="13" height="13" rx="2" fill="#12151f"><title>2026-02-10</title></rect><rect x="48" y="52" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-11 · 9045 msgs</title></rect><rect x="48" y="68" width="13" height="13" rx="2" fill="#12151f"><title>2026-02-12</title></rect><rect x="48" y="84" width="13" height="13" rx="2" fill="#12151f"><title>2026-02-13</title></rect><rect x="48" y="100" width="13" height="13" rx="2" fill="#12151f"><title>2026-02-14</title></rect><rect x="48" y="116" width="13" height="13" rx="2" fill="#12151f"><title>2026-02-15</title></rect><rect x="64" y="20" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-16 · 14115 msgs</title></rect><rect x="64" y="36" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-17 · 1950 msgs</title></rect><rect x="64" y="52" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-18 · 3687 msgs</title></rect><rect x="64" y="68" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-19 · 11272 msgs</title></rect><rect x="64" y="84" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-20 · 7163 msgs</title></rect><rect x="64" y="100" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-21 · 246 msgs</title></rect><rect x="64" y="116" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-22 · 8609 msgs</title></rect><rect x="80" y="20" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-23 · 14180 msgs</title></rect><rect x="80" y="36" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-24 · 4345 msgs</title></rect><rect x="80" y="52" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-25 · 2402 msgs</title></rect><rect x="80" y="68" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-26 · 6762 msgs</title></rect><rect x="80" y="84" width="13" height="13" rx="2" fill="#39d353"><title>2026-02-27 · 2093 msgs</title></rect><rect x="80" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="80" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="96" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="96" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="96" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="96" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="96" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="96" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="96" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="112" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="112" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="112" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="112" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="112" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="112" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="112" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="128" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="128" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="128" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="128" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="128" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="128" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="128" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="144" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="144" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="144" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="144" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="144" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="144" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="144" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="160" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="160" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="160" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="160" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="160" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="160" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="160" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="176" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="176" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="176" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="176" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="176" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="176" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="176" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="192" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="192" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="192" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="192" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="192" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="192" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="192" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="208" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="208" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="208" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="208" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="208" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="208" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="208" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="224" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="224" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="224" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="224" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="224" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="224" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="224" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="240" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="240" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="240" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="240" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="240" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="240" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="240" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="256" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="256" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="256" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="256" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="256" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="256" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="256" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="272" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="272" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="272" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="272" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="272" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="272" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="272" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="288" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="288" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="288" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="288" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="288" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="288" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="288" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="304" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="304" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="304" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="304" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="304" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="304" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="304" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="320" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="320" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="320" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="320" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="320" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="320" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="320" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="336" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="336" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="336" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="336" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="336" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="336" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="336" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="352" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="352" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="352" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="352" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="352" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="352" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="352" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="368" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="368" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="368" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="368" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="368" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="368" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="368" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="384" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="384" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="384" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="384" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="384" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="384" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="384" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="400" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="400" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="400" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="400" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="400" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="400" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="400" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="416" y="20" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="416" y="36" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="416" y="52" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="416" y="68" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="416" y="84" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="416" y="100" width="13" height="13" rx="2" fill="#12151f"><title></title></rect><rect x="416" y="116" width="13" height="13" rx="2" fill="#12151f"><title></title></rect></svg>
       <div class="cal-legend">
         Less
         <span class="cal-swatch" style="background:#12151f;border:1px solid #1e2235"></span>
@@ -393,7 +658,7 @@ footer a:hover{color:var(--text)}
       <div>
         <div class="work-sub-title">Hour of Day</div>
         <div class="hour-hmap">
-          <div class="hcell" style="background:rgba(16,185,129,0.12)" title="12am · 30 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.31)" title="1am · 7,183 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.97)" title="2am · 32,260 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.13)" title="3am · 289 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.41)" title="4am · 10,893 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.45)" title="5am · 12,360 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.36)" title="6am · 8,996 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.30)" title="7am · 6,670 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.20)" title="8am · 3,064 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.35)" title="9am · 8,751 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="10am · 0 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.35)" title="11am · 8,735 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.55)" title="12pm · 16,409 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="1pm · 0 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="2pm · 0 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.15)" title="3pm · 1,004 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="4pm · 0 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.12)" title="5pm · 51 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="6pm · 0 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.17)" title="7pm · 1,950 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.20)" title="8pm · 3,150 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.41)" title="9pm · 10,970 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="10pm · 0 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="11pm · 0 msgs"></div>
+          <div class="hcell" style="background:rgba(16,185,129,0.12)" title="12am · 30 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.31)" title="1am · 7,183 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.97)" title="2am · 32,260 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.27)" title="3am · 5,557 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.41)" title="4am · 10,893 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.45)" title="5am · 12,360 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.36)" title="6am · 8,996 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.31)" title="7am · 7,086 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.20)" title="8am · 3,064 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.35)" title="9am · 8,751 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="10am · 0 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.35)" title="11am · 8,735 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.55)" title="12pm · 16,409 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="1pm · 0 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="2pm · 0 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.15)" title="3pm · 1,004 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.22)" title="4pm · 3,949 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.12)" title="5pm · 51 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="6pm · 0 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.17)" title="7pm · 1,950 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.20)" title="8pm · 3,150 msgs"></div><div class="hcell" style="background:rgba(16,185,129,0.41)" title="9pm · 10,970 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="10pm · 0 msgs"></div><div class="hcell" style="background:rgba(30,34,53,0.6)" title="11pm · 0 msgs"></div>
         </div>
         <div class="hour-hlbls">
           <span class="hrlbl">12am</span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl">6am</span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl">12pm</span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl">6pm</span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span><span class="hrlbl"></span>
@@ -415,12 +680,12 @@ footer a:hover{color:var(--text)}
               <div class="dow-bar" data-h="20950"></div>
             </div><div class="dow-col" title="Thu: 27,234 msgs">
               <div class="dow-bar" data-h="27234"></div>
-            </div><div class="dow-col" title="Fri: 16,711 msgs">
-              <div class="dow-bar" data-h="16711"></div>
+            </div><div class="dow-col" title="Fri: 21,076 msgs">
+              <div class="dow-bar" data-h="21076"></div>
             </div><div class="dow-col" title="Sat: 3,996 msgs">
               <div class="dow-bar" data-h="3996"></div>
-            </div><div class="dow-col" title="Sun: 14,726 msgs">
-              <div class="dow-bar" data-h="14726"></div>
+            </div><div class="dow-col" title="Sun: 19,994 msgs">
+              <div class="dow-bar" data-h="19994"></div>
             </div>
         </div>
         <div class="dow-label-row">
@@ -440,35 +705,35 @@ footer a:hover{color:var(--text)}
         
         <div class="list-row">
           <span class="list-key">Edit</span>
-          <span class="list-val">12,839</span>
+          <span class="list-val">13,597</span>
         </div>
         <div class="list-row">
           <span class="list-key">Read</span>
-          <span class="list-val">10,322</span>
+          <span class="list-val">10,959</span>
         </div>
         <div class="list-row">
           <span class="list-key">Bash</span>
-          <span class="list-val">8,333</span>
+          <span class="list-val">9,199</span>
         </div>
         <div class="list-row">
           <span class="list-key">Grep</span>
-          <span class="list-val">2,818</span>
+          <span class="list-val">2,972</span>
         </div>
         <div class="list-row">
           <span class="list-key">Write</span>
-          <span class="list-val">1,921</span>
+          <span class="list-val">2,131</span>
         </div>
         <div class="list-row">
           <span class="list-key">Glob</span>
-          <span class="list-val">1,605</span>
+          <span class="list-val">1,694</span>
         </div>
         <div class="list-row">
           <span class="list-key">TaskUpdate</span>
-          <span class="list-val">687</span>
+          <span class="list-val">746</span>
         </div>
         <div class="list-row">
           <span class="list-key">Task</span>
-          <span class="list-val">634</span>
+          <span class="list-val">647</span>
         </div>
       </div>
       <div class="list-card">
@@ -476,7 +741,7 @@ footer a:hover{color:var(--text)}
         
         <div class="list-row">
           <span class="list-key">file-1.tsx</span>
-          <span class="list-val">1002×</span>
+          <span class="list-val">1030×</span>
         </div>
         <div class="list-row">
           <span class="list-key">file-2.ts</span>
@@ -488,7 +753,7 @@ footer a:hover{color:var(--text)}
         </div>
         <div class="list-row">
           <span class="list-key">file-4.ts</span>
-          <span class="list-val">393×</span>
+          <span class="list-val">414×</span>
         </div>
         <div class="list-row">
           <span class="list-key">file-5.md</span>
@@ -500,17 +765,9 @@ footer a:hover{color:var(--text)}
 </section>
 
 
-<div class="author-section">
-  <div class="container">
-    <div class="author-card">
-      <div class="author-name">Jake Edwards</div>
-      <div class="author-sub">Built with Claude Code · 2026-02-02 → 2026-02-27</div>
-    </div>
-  </div>
-</div>
 
 <footer>
-  <span>AthenaForms — Full Build · Claude Wrapped</span>
+  <span>My Project · Claude Wrapped</span>
   <span style="display:flex;gap:20px;align-items:center">
     <a href="https://github.com/ElementalInsights/claude-wrapped" target="_blank" rel="noopener">claude-wrapped</a>
     <a href="https://www.linkedin.com/in/jake-edwards-a6a334a/" target="_blank" rel="noopener">Jake Edwards</a>
@@ -521,7 +778,7 @@ footer a:hover{color:var(--text)}
 <div id="tip"></div>
 
 <script>
-const SESS = [{"id":"88879cc6","slug":null,"compacts":0,"sizeMB":0.38,"msgs":51,"positions":[],"turns":[34686,36233,158785],"start":"2026-02-02T23:30:46.143Z"},{"id":"8ea02743","slug":null,"compacts":5,"sizeMB":8.6,"msgs":1770,"positions":[0.1574832464631422,0.38049143708116157,0.45606850335070737,0.7021593447505584,0.9158600148920327],"turns":[71588,253822,70030,47863,90658,72312,33529,158350,151915,298256,292793,46081,392764,212088,266132,51839,45064,75924,70616,184166,111462,41109,58583,99308,44026,71824,51772,41590,474418,236714,194509,249502,316575,57941,252300,211924,172482,118793,128380,112708,507891,30659],"start":"2026-02-03T03:03:50.615Z"},{"id":"fee368b3","slug":null,"compacts":21,"sizeMB":36.15,"msgs":7397,"positions":[0.04242646385045359,0.09511591679648126,0.15366993493997985,0.19114817190506736,0.2606066159626134,0.32630807294052966,0.3740492990011912,0.4084119857051223,0.4471730963071566,0.4968386328232383,0.5405479703106387,0.5956199028681389,0.6424447906166957,0.6849628882983597,0.7350865939704939,0.7846604966553652,0.8143498579675617,0.8598918720791716,0.8938880234582608,0.9190873270411436,0.9630715660221754],"turns":[113302,146231,88542,102280,97434,419016,273630,131706,56803,39093,149046,54678,106576,43163,411239,36209,279974,54089,34416,43975,90035,52147,191581,79071,111305,305533,85479,99892,52268,205881,32584,70120,492973,75079,44392,165573,31187,81063,71840,109517,113206,318192,51806,40778,251803,31627,113672,39816,166653,259748,39826,82657,702291,146325,132686,313107,36474,30325,61696,69538,225880,45949,47469,49592,147799,38421,42944,515793,36762,85089,54715,41221,132426,447750,317221,32297,107060,178075,80946,369020,58570,46008,37268,347640,210159,118062,30490,175162,56489,60091,183905,41757,134468,48386,133453,36747,45135,35913,66491,37248,317102,463514,251936,585433,153511,45317,188683,91667,88684,82000,48392,361296,116930,50161,74880,51563,35479,101664,157219,40289,51666,575014,73342,78940,45419,124565,44091,77172,32833,118967,39103,107299,225458,132639,617931,146611,104634,287114,177632,35861,56087,102609,309254,55234,52194,306582,169341,193243,486558,273428,252461,139638,56790,33528,120711,118438,94023,50275],"start":"2026-02-03T08:26:19.719Z"},{"id":"1807d12a","slug":null,"compacts":0,"sizeMB":0.2,"msgs":10,"positions":[],"turns":[66559],"start":"2026-02-04T14:00:03.301Z"},{"id":"07e6d1f6","slug":null,"compacts":9,"sizeMB":13.95,"msgs":3054,"positions":[0.12480359147025814,0.22850729517396184,0.3288439955106622,0.4161616161616162,0.4769921436588103,0.6388327721661055,0.6978675645342312,0.8291806958473625,0.9887766554433222],"turns":[40501,47542,162593,129093,56604,43535,81987,44295,49816,77861,349235,165875,274816,170152,40346,35292,80119,421837,291922,42090,32146,64718,58572,33709,165998,125537,108499,42709,40281,83290,110580,74019,240966,49636,47252,47578,159926,152245,41550,308363,44498,143416,51070,51906,205899,52335,31076,224299,48597,79561,65130,34096,41031,204806,97339,199104,55888,132213,35873,42816,436021,217787,165475,38850,86915,66859,72422,59484,39622,275194,45856,79077,34067,505266,126096,105757,167157,58601,63216],"start":"2026-02-04T14:11:00.620Z"},{"id":"ca858525","slug":null,"compacts":6,"sizeMB":10.83,"msgs":2752,"positions":[0.13786716062450383,0.2304842550939402,0.36279439005027786,0.5347975654935168,0.7097115639057952,0.8232336596983328],"turns":[87817,161137,37088,42919,68084,60243,78578,198233,123893,163773,233545,40880,281631,58842,436157,55278,40634,88465,220554,112532,209505,775569,56768,80163,36662,33145,68740,181179,79209,239956,84922,159078,175155,102298,151687,132975,41113,58782,62687,72004,185279,56894,109145,115057,168659,159930,427625,599497,244261],"start":"2026-02-04T15:16:11.107Z"},{"id":"a3695db8","slug":null,"compacts":24,"sizeMB":46.22,"msgs":9200,"positions":[0.053818932468298435,0.09407254497198467,0.13071365378944264,0.1809938071365379,0.22316425833087586,0.2625331760542613,0.2920967266293129,0.3275582424063698,0.3636832792686523,0.40895016219404307,0.44699203774697727,0.4840017693895606,0.5248451784134474,0.5647301680920083,0.6125774107932763,0.6547478619876143,0.6860808021232675,0.7264081391919788,0.7601002654084341,0.8069890887643763,0.8403125921557063,0.8585225597168976,0.9012090828664111,0.958935417281038],"turns":[188681,308497,269388,77151,53526,180177,144859,36621,306142,80888,79566,341803,53098,134487,202258,322848,90115,296655,60208,164329,683722,140463,33205,87841,114028,116090,217097,33399,58704,321826,351273,409431,127947,38438,145287,443192,132837,56107,73161,58444,30138,176774,55803,144258,552017,149849,70860,126727,419245,31877,79948,106231,187995,154634,110054,47456,442788,30364,69219,67250,82638,44229,48467,190082,34577,39911,48467,196402,72564,87138,79343,49749,33273,59141,56802,40287,289381,52702,33196,44683,54671,34422,111915,43535,60525,39465,150825,96674,49971,48330,219916,339555,72076,108687,86242,49359,39252,137155,200149,149144,110599,113956,84627,58783,55943,133299,190900,76909,110031,61784,43781,56162,46388,64864,51234,34428,218644,90635,46550,34583,36393,60370,51137,41472,52624,142599,82494,81207,131930,33302,36123,36677,51939,87699,116080,57196,33124,66323,244762,188508,148489,69435,77424,99620,97374,169549,65447,62250,32334,100056,47206,40292,45276,113144,277916,141653,119310,152724,135297,344970,229561,49752,181164,112299,108972,100305,79749,65596,64690,55704,62059,39446,85320,118437,33994,170873,491964,143161,132964,195167,641224,913640,531108,1060671],"start":"2026-02-06T03:12:27.050Z"},{"id":"f756e15b","slug":null,"compacts":4,"sizeMB":8.28,"msgs":1723,"positions":[0.17688330871491875,0.3652141802067947,0.6059822747415067,0.8131462333825702],"turns":[103210,43491,69780,46538,42492,33881,228794,35303,31892,33265,117674,32875,147069,407920,209112,174946,231254,231504,212043,44407,259953,315693,83453,55696,70988,47993,1156273,85374,65617,127414,60331,93445,63260,39817,125737,68236,82099,112986,328670,109775,156762,265333,187175,80726],"start":"2026-02-06T07:15:50.895Z"},{"id":"eb5804a9","slug":null,"compacts":0,"sizeMB":1.25,"msgs":44,"positions":[],"turns":[],"start":"2026-02-06T10:55:37.309Z"},{"id":"1b4badea","slug":null,"compacts":17,"sizeMB":32.87,"msgs":6033,"positions":[0.06355241716458447,0.13709940249864205,0.19435089625203694,0.2557305812058664,0.30048886474741987,0.36230309614340034,0.4329168929929386,0.49560021727322107,0.5490494296577947,0.6111895708853884,0.663335143943509,0.7057034220532319,0.7467680608365019,0.7918522542096686,0.8514937533948941,0.9204780010863661,0.9655621944595328],"turns":[366260,294310,202690,225729,549246,182028,251661,219358,95737,82563,59492,54676,44210,166050,1015430,200671,207183,70376,178740,271993,231272,85131,191367,86077,120500,97801,258651,80683,95069,77747,63756,31682,86478,46513,35158,67159,147083,90385,674440,56640,61884,46642,275242,68728,131089,822318,123518,92411,55011,137750,41012,34494,251788,34240,32349,40644,67881,33939,31316,115417,32409,73559,38978,118010,117761,230350,41673,43768,89589,55324,129322,68277,33918,121696,40715,45662,50022,42774,233351,157393,101394,69818,43425,190628,182888,154426,35458,31931,417193,95519,30982,97866,228865,315805,45154,210775,87110,69566,114445,379049,412386,105720,121260,141867,271347,368860,59544,270776,89912,41560,87057,1116715,296917,136879,154331,189686,57203,53002,91272,35714,39105,672380],"start":"2026-02-06T11:08:30.286Z"},{"id":"b0ecfa4d","slug":null,"compacts":0,"sizeMB":0.56,"msgs":71,"positions":[],"turns":[37419,255710,50837,89818,79035,91425,166375,84698,145942,245453],"start":"2026-02-06T21:10:07.198Z"},{"id":"0bc0fa59","slug":null,"compacts":0,"sizeMB":0.65,"msgs":107,"positions":[],"turns":[102461,202933,34685,229238],"start":"2026-02-07T11:17:08.667Z"},{"id":"cad880e2","slug":null,"compacts":1,"sizeMB":3.39,"msgs":493,"positions":[0.8489968321013728],"turns":[407549,48570,62328,102292,105106,255348,64321,114351,131250,358399,57927,31884],"start":"2026-02-07T11:59:51.757Z"},{"id":"9bc41275","slug":null,"compacts":5,"sizeMB":60.66,"msgs":2394,"positions":[0.1431919381298336,0.27536911178814155,0.41481134286383875,0.5526130771033513,0.7408014998828216],"turns":[64893,147067,98530,46852,41502,34711,47317,85057,30783,287674,232389,135184,55458,45989,42755,161380,166713,35458,30097,280800,41994,100247,78974,110793,105464,111733,48427,180066,30915,167657,95892,147880,89038,220034,312635,64329,196933,72996,174326,287220,79786,155249,377781,58210,130996,142476,345533,77049,85579,150095,75110,94448,67974,157969,127413,88996,57623,266199,105009],"start":"2026-02-08T02:35:04.042Z"},{"id":"e6f18861","slug":null,"compacts":2,"sizeMB":3.45,"msgs":756,"positions":[0.4900181488203267,0.9392014519056261],"turns":[157301,144167,204329,99088,32825,45539,209239,143396,156053,83353,84926,205231,79014,51642,33595,43685,52045,184301,37817,35929,144034,54041],"start":"2026-02-08T02:57:48.843Z"},{"id":"ae9d40de","slug":null,"compacts":15,"sizeMB":34.02,"msgs":5828,"positions":[0.04117379435850774,0.10259326660600546,0.16856232939035487,0.20825750682438582,0.26888080072793447,0.3374658780709736,0.4177661510464058,0.4830527752502275,0.5578935395814377,0.6267060964513194,0.7060964513193813,0.794813466787989,0.8743175614194723,0.9481346678798908,0.9995450409463148],"turns":[35979,213202,347436,177107,74060,93786,67235,380631,61446,348720,126969,259721,32493,83782,164843,192706,154726,49123,92172,40110,175505,46941,71922,160408,44708,39933,49715,75222,100323,70733,71268,35017,77231,278669,33681,67608,46899,32850,186460,85843,81839,44818,43400,44306,49151,40590,297813,143936,116245,35864,179035,70132,148386,36726,161184,130614,161816,93020,32088,47536,77428,165788,40680,125052,192942,64226,80876,36100,318843,76874,30645,51454,32424,67965,48411,66342,164687,202775,116384,170991,133222,80790,111043,36413,95040,103177,89055,306082,123977,118876,40644,40368,146497,69710,35082,105509,35501,47662,51911,35813,218904,62663,32171,233714,260423,116262,64007,165384,145442,35416,58614,32730,52437,55532,40777,215879,57061,63288,221985,96446,93408,82814,88304,35300,142412,157896,73643,83757,46609,46140,368815,320441,138893,63002,58350,98262,33240,247867,147598,30481,53328,259115,121226,62069,198086,210066,41407,61383,40210,42313,51233,64838,39552,140886,45981,199335,35495,73325,78407,73460,80441,30480,35568,46414,87157,42656,42164,168639],"start":"2026-02-08T08:08:29.873Z"},{"id":"da54d577","slug":null,"compacts":0,"sizeMB":1.33,"msgs":289,"positions":[],"turns":[81426,73982,256318,224351],"start":"2026-02-08T09:07:30.285Z"},{"id":"b52cae33","slug":null,"compacts":5,"sizeMB":11.88,"msgs":1778,"positions":[0.2796005706134094,0.44436519258202567,0.7157631954350927,0.8327389443651926,0.9803851640513552],"turns":[272033,185194,167701,181323,41294,64485,35321,46074,68605,135499,122670,52697,222275,290160,236438,89750,116853,65915,110398,47608,76196,66422,38297,36896,33196,32395,37372,83438,30542,50905,176943,210379,85481,59699,213624,37960,36596,42888,33252,717306,102377,47263,33945,32241,32994,38937,40608,48734,143352,137255,82394,67389,178494],"start":"2026-02-09T11:11:14.503Z"},{"id":"cc2859b8","slug":null,"compacts":10,"sizeMB":19.94,"msgs":3562,"positions":[0.13633998265394623,0.24284475281873374,0.3113616652211622,0.38352124891587164,0.5045967042497832,0.6194275802254987,0.7398091934084996,0.8392020815264527,0.9210754553339116,0.9887250650477016],"turns":[74090,48836,64991,323136,33645,229726,102441,385946,38728,55212,166718,512633,346682,171468,42063,40157,354524,375899,239501,88281,46376,58817,185648,241096,44994,61601,46576,51304,57380,113996,61496,118402,61067,87358,70727,208642,533447,228120,115760,129384,395025,65585,108454,81216,56581,53169,118298,61791,147781,36242,63619,85567,53126,31228,169557,616371,37317,128629,81437,33839,34460,71485,41701,61950,32437,186556,274365,37547,48421,63757,167866,42963,103863,97541,134354,37233,73574,73880,255075,196545,521689,73947,83305,262128,345290,155388,385012,90566],"start":"2026-02-09T17:58:46.046Z"},{"id":"f47fe323","slug":null,"compacts":12,"sizeMB":26.13,"msgs":3995,"positions":[0.040373707040373706,0.11695028361695028,0.21888555221888556,0.28178178178178176,0.3875542208875542,0.48281614948281615,0.579245912579246,0.6628294961628295,0.7409075742409076,0.828661995328662,0.8913913913913913,0.9773106439773106],"turns":[57628,51311,220712,40158,260712,32918,46235,78182,57556,76809,430812,148794,178891,224406,239706,370593,203907,67163,67868,35484,39104,42712,441780,35167,223777,82276,94253,89568,100981,48316,44526,125342,137677,115986,64982,61098,274280,53579,71987,73847,130858,33079,79600,133217,68274,32725,359624,110645,35600,56090,37005,93014,48796,34686,36363,111413,53409,40257,271402,126373,32728,77804,101238,113812,36782,34838,39325,37450,79673,261711,44379,72991,78133,41986,218012,66156,145646,64158,68162,71616,97508,190706,232484,55712,162239,45644,72014,79629,42976,31691,32736,50472,136399,321276,99671,49549,103048,72439,121364,56628,42673,147516,265962],"start":"2026-02-11T07:12:06.671Z"},{"id":"570f6ea8","slug":null,"compacts":0,"sizeMB":1.61,"msgs":130,"positions":[],"turns":[122403,49167,86268],"start":"2026-02-11T07:24:34.544Z"},{"id":"6e47d1f1","slug":null,"compacts":11,"sizeMB":24.38,"msgs":4920,"positions":[0.09444063143445436,0.21564859299931366,0.315442690459849,0.39958819492107067,0.508716540837337,0.5902539464653397,0.6432395332875772,0.7376801647220316,0.8237474262182567,0.8955387783115992,0.9766643788606726],"turns":[185800,61485,130306,88501,76245,52185,87858,136357,78415,34500,194716,40744,69906,36978,119459,81667,34644,83793,212795,196606,85800,34729,80876,35882,274534,65471,30734,145111,40535,312431,72501,138431,41867,88013,84292,219112,148923,332368,34315,92521,32126,40441,63510,460739,43159,46519,241392,212046,113430,101273,127295,107215,43017,45299,48898,37316,455784,61110,36059,277637,162831,530005,306290,135560,241082,36818,42401,42676,269586,332637,41040,306580,42932,216927,96876,36811,36409,275788,34051,78961,58895,87292,133054,130560,80222,35082,112339,30330,56520,198282,31411,177163,55609,57571,108036,78108,48456,84945,49065,41338,34351,37546,33082,113339,44608,52315,254409,30033,91186,45026,57314,39673],"start":"2026-02-11T08:24:58.272Z"},{"id":"1715a9a5","slug":null,"compacts":6,"sizeMB":12.93,"msgs":2326,"positions":[0.10186298076923077,0.16766826923076922,0.3368389423076923,0.5354567307692307,0.7124399038461539,0.9266826923076923],"turns":[32590,37884,53918,44074,32151,91930,56260,197489,109365,165847,80388,53158,44627,77045,183758,384295,159111,39176,256297,225786,35950,236873,519117,97396,138112,106389,123555,61090,121788,154385,34086,108268,191975,60973,39595,54252,51077,78163,30209,60856,195377,413249,236279,83912,77064,48831,35732,32020,40370,75832,440882],"start":"2026-02-16T08:07:24.777Z"},{"id":"e201e6be","slug":null,"compacts":29,"sizeMB":81,"msgs":11789,"positions":[0.028725410940447317,0.04532471032066828,0.08676906494206413,0.10595526812180005,0.1434653732147669,0.1793586634330369,0.21153327943950417,0.2460253300997036,0.2784155214227971,0.3136081918620318,0.3572621934788467,0.3841552142279709,0.4216114254917812,0.44295338183777955,0.4919967663702506,0.5302613850714093,0.5692266235516034,0.6047426569657774,0.6428455941794664,0.6585286984640258,0.7018054432767448,0.7555914847749933,0.7720291026677445,0.7924548639180814,0.8259229318243061,0.871301535974131,0.8855834007006198,0.9103206682834816,0.9324171382376718],"turns":[438376,130779,41594,86221,57152,53935,68613,80904,507254,134201,31460,238615,67806,391934,150492,47991,98427,187425,38985,130490,102373,40432,590520,172938,66317,206658,77124,177452,45475,132726,452968,62136,475630,41297,179927,209287,59395,98221,61306,47465,62908,35574,33074,120402,380914,87261,82419,31571,30756,225088,82371,51929,77856,60396,40392,173620,314285,272385,49434,267912,34037,54206,73364,82036,39609,317333,248916,83237,44078,43664,34353,183576,48454,75466,55505,30672,209903,219743,35084,136616,121797,54984,66955,206713,156084,119246,86312,139757,39047,138622,129004,42978,59811,58753,107137,50964,277248,279640,85457,49635,97212,57490,194872,185130,36801,68862,82409,141621,33568,42049,43778,31407,157224,31471,733278,135060,82635,122783,41441,95434,738425,201273,201813,106717,56410,88308,34151,133881,326823,73206,167723,194763,59143,170034,33006,343340,59775,163000,43801,135253,33184,75598,138601,156804,85550,113942,360613,43997,186257,194543,126873,120478,34434,125824,314599,174426,197705,221935,42620,183726,37845,78475,32215,59112,98516,66496,117666,57254,41123,84059,51596,196678,50168,90508,43321,46391,30706,57388,271475,84800,165956,138193,145865,34574,105543,252749,203460,86921,89914,36231,58326,36407,50896,53609,238377,221885,108800,35408,146069,123960,88240,126911,75098,40976,33653,67559,532768,103625,272910,104718,132533,286760,79692,374458,72341,58398,154492,85636,125967,126503,434716,114210,276659,94177,63735,523568,59094,284763,196692,42626,200275,140047,140924,39248,100037,145792,118534,224453,182271],"start":"2026-02-16T08:44:11.820Z"},{"id":"1150700c","slug":null,"compacts":4,"sizeMB":12.38,"msgs":1950,"positions":[0.16306549628629305,0.3261309925725861,0.5921674544226874,0.824442943956786],"turns":[51493,256650,76453,72089,112765,84928,150042,161114,45599,258171,79601,142470,266202,48969,79078,43887,69362,39392,35371,31317,38197,224088,67817,56390,113956,43124,85167,143821,136699,126610,59307,222336,55777,66912,88652,31176,367242,126651,77930,242796,75945,70758,73523,66909,127139,30492,57701,99864,67252,36715,36112,48778],"start":"2026-02-17T01:18:54.455Z"},{"id":"fe8ed20e","slug":null,"compacts":0,"sizeMB":2.09,"msgs":348,"positions":[],"turns":[823031,499082],"start":"2026-02-18T11:14:59.376Z"},{"id":"2c99e2af","slug":null,"compacts":0,"sizeMB":1.88,"msgs":168,"positions":[],"turns":[469138],"start":"2026-02-18T11:41:01.913Z"},{"id":"e913fada","slug":null,"compacts":5,"sizeMB":12.2,"msgs":1469,"positions":[0.22922636103151864,0.3578080229226361,0.5848853868194842,0.9831661891117478,0.995702005730659],"turns":[31984,39546,169003,202064,465856,240268,43703,276979,225616,339554,449175,2613616,109048,656081],"start":"2026-02-18T12:53:28.631Z"},{"id":"bd5c0741","slug":null,"compacts":0,"sizeMB":5.64,"msgs":406,"positions":[],"turns":[525618,526207,238876],"start":"2026-02-18T12:59:35.635Z"},{"id":"060ccecd","slug":null,"compacts":4,"sizeMB":13.37,"msgs":1296,"positions":[0.13836921990822448,0.32439110483586303,0.48499823508648077,0.9647017296152488],"turns":[301079,56896,163054,364460,942406,41745,657701,618419],"start":"2026-02-18T15:34:40.794Z"},{"id":"09d2c3e1","slug":null,"compacts":1,"sizeMB":4.67,"msgs":574,"positions":[0.6629464285714286],"turns":[248661,345810,328714,1209299],"start":"2026-02-19T07:32:03.373Z"},{"id":"f66b9c67","slug":null,"compacts":3,"sizeMB":5.3,"msgs":729,"positions":[0.16576297443841984,0.4384198295894655,0.6560805577072037],"turns":[47939,50977,82141,44282,99009,73910,58335,48858,45657,47796,207012,110778,244988,50309,433466,50123,182236,106135,185909,360512,105873,786756,51288,490168,31310,72246,44791,51692,38932,38160,38297],"start":"2026-02-19T07:33:09.435Z"},{"id":"e0f11cc1","slug":null,"compacts":24,"sizeMB":52.34,"msgs":6536,"positions":[0.30763105507631056,0.31844724618447245,0.35938951559389515,0.40039814200398144,0.427936297279363,0.4559389515593895,0.48925016589250164,0.5307896483078964,0.5595222295952222,0.5727936297279363,0.5988055739880558,0.6382879893828799,0.6741207697412077,0.7078964830789648,0.7377571333775713,0.7753815527538155,0.8111479761114797,0.8364963503649635,0.8576642335766423,0.8911081619110817,0.9150630391506304,0.938420703384207,0.9633709356337093,0.9842070338420703],"turns":[676103,453189,32687,40041,42651,79716,63022,149349,38869,1114271,368286,631726,41595,549996,778895,837442,43393,823519,317591,57658,34874,125272,507284,273652,637497,290238,153165,193267,271548,32625,46171,91632,599865,844029,785250,410229,266182,96932,145526,64797,43866,156429,170800,44946,297275,38945,44930,94929,463562,114170,1282939,474165,55187,113795,294329,87734,332814,39742,48480,158865,603249,193615,239501,37756,465466,52957,515473,119137,143185,153203,77663,515466,108053,245934,58728,59068,508534,516651,232186,125920,436131,182612,209828,248553,53263,422569,364047,56472,552449,485066,43287],"start":"2026-02-19T10:08:15.456Z"},{"id":"6dec3bdf","slug":null,"compacts":17,"sizeMB":25.91,"msgs":3433,"positions":[0.10168528687748532,0.16833932967241053,0.21548949062677522,0.2963453891308464,0.3374360916493088,0.40200719560689263,0.45900397651959857,0.492899072145427,0.5462980496118159,0.6114372277977655,0.670138231395569,0.7129331565991289,0.7739064571103957,0.8197311115319068,0.8460518841128574,0.9123272107555387,0.9458435902291232],"turns":[127135,101034,143639,206134,85653,85531,40417,794397,125608,218021,144009,2820527,1960738,481601,38697,1081666,32760,138204,70750,135380,40850,1336913,69529,283794,303815,106730,359717,70050,212028,203732,88483,147877,117755,2202216,34255,2912684,1433939,76006],"start":"2026-02-19T11:43:30.272Z"},{"id":"63a10e91","slug":null,"compacts":4,"sizeMB":7.57,"msgs":1013,"positions":[0.10313447927199192,0.378159757330637,0.5667340748230536,0.7477249747219413],"turns":[113857,171070,257976,92081,147797,263386,67842,389331,523902,160508,933316,310844,87165,77679,33165,41665,58223,40286,35680,53035,46597,48916,288545,41830,36828,98005,301622,84968,34862,118889,88756,154465,77402],"start":"2026-02-20T12:09:58.998Z"},{"id":"4203b515","slug":null,"compacts":15,"sizeMB":22.14,"msgs":3566,"positions":[0.058302321460216196,0.14052808789650895,0.19617224880382775,0.25943646996278574,0.30427077795498847,0.33067517278043596,0.4109516214779373,0.4713804713804714,0.5270246322877902,0.5665426191741981,0.6060606060606061,0.6608187134502924,0.734006734006734,0.8546872231082757,0.9284068757752968],"turns":[40837,72498,43411,56768,61165,218731,201207,37317,128363,648396,343223,33604,194531,32259,30996,36499,54277,31863,192054,248442,396733,55493,232293,1283328,678415,57194,559667,1045163,483119,709958,490038,294418,40063,349045,468680,132130,110881,601714,1127647,384047,657264,155568,477607,228451,32806,100862,246291,65838,220367,464210,130422,36354,52190,224236,248380,282804,164678,185961,175544],"start":"2026-02-20T17:01:28.978Z"},{"id":"81e460c3","slug":null,"compacts":11,"sizeMB":18.72,"msgs":2584,"positions":[0.376437289934548,0.4643552096232089,0.5292764903591014,0.6062267822395189,0.6387758712188218,0.6976826463824518,0.7266937909074828,0.7797629577215638,0.8330090217583584,0.9012913497258093,0.9844330444012029],"turns":[351076,74391,214001,72488,113440,66264,538312,41618,133590,281684,485617,44531,37402,164472,372779,128195,153717,31660,374130,38396,143854,322464,33948,397543,304690,101496,43581,469903,35297,277918,400903,36846,146047,124877,144416,103804,520264,279270,44708,840224,71525,283948,55375,585482,331967,32247,375663,250984,32077,94004,78582,136329,126239,288312,302426,438830,75100],"start":"2026-02-20T18:03:58.274Z"},{"id":"26281072","slug":null,"compacts":0,"sizeMB":2.64,"msgs":246,"positions":[],"turns":[47124,116367,1004658,400390,78881,37999,121681,49925,40405,34465,145132,31444],"start":"2026-02-21T15:35:43.401Z"},{"id":"47f60321","slug":null,"compacts":19,"sizeMB":33.44,"msgs":3948,"positions":[0.053400637619553666,0.0924548352816153,0.12964930924548354,0.15608395324123273,0.18809776833156217,0.21865037194473963,0.2822794899043571,0.3238575982996812,0.41246014877789583,0.4772848034006376,0.554596174282678,0.660201912858661,0.700451647183847,0.7203772582359192,0.7546493092454836,0.8133634431455898,0.8412592986184909,0.8812433581296493,0.9321200850159405],"turns":[872258,202196,212745,83574,232864,125855,33670,154303,391176,574132,159055,309650,796641,505618,214349,195534,443883,44426,31611,50395,100596,103680,167946,326489,379940,126544,680412,311466,52458,362759,157645,189280,148900,55833,199921,105591,568033,1118596,84423,75715,56938,142066,1067566,46647,612833,169783,136361,72004,1501644,62561,98803,922865,252980,93867,233576,81347,63892,32294,44561,203383,99745,87870,79517,40739,31712,70909,236741,113600,90651,40875,87613,72029,35941,156804,54832,275671,124461,132632,216724,68791,697987,43021,142021],"start":"2026-02-22T12:43:59.082Z"},{"id":"3cb666d8","slug":null,"compacts":0,"sizeMB":1.21,"msgs":204,"positions":[],"turns":[143903,233795,55706,177573],"start":"2026-02-22T12:52:37.735Z"},{"id":"3bfe9dd4","slug":null,"compacts":22,"sizeMB":40.49,"msgs":4457,"positions":[0.046481371969248966,0.08503843879361325,0.15446481371969248,0.21324659964518036,0.2528681253696038,0.29544648137196927,0.3497338852749852,0.37776463630987583,0.40283855706682437,0.43027794204612657,0.49603784742755763,0.5529272619751626,0.6352454169130692,0.6807806031933767,0.7332939089296274,0.7622708456534595,0.7926670609107037,0.8332347723240686,0.8720283855706682,0.9023063276167947,0.9422826729745712,0.9856889414547605],"turns":[38687,44095,132894,147462,60628,57197,812277,527296,69423,485211,130097,110175,67258,95918,202519,59548,171371,40939,1023472,618577,90253,61921,873860,359133,39363,32685,106233,312796,273496,38359,298997,133590,53510,409857,268974,39428,172651,95809,137508,296886,371441,74363,719347,78720,82599,100226,357468,38591,234557,357805,34499,46221,32463,186901,424110,65014,49409,89967,42052,398408,457505,71052,240334,178651,513661,691141,41455,41448,477308,167141,49481,118949,146002,234601,57057,378235,196536,221107,214494,417158,256695,32765,344316,75776,163926,46005,32999,175904,332359,55770,34404,308861,38534,40951,54368,183575,499672,620440,37487,531598,37934,511365,753830,52343,373691,108086,97995,311774,83239,102324,651697,141290,41412,227267,61704],"start":"2026-02-22T15:50:56.361Z"},{"id":"e6bb0412","slug":null,"compacts":0,"sizeMB":0.51,"msgs":30,"positions":[],"turns":[173206,73857],"start":"2026-02-23T06:18:25.674Z"},{"id":"c2cfd81f","slug":null,"compacts":1,"sizeMB":3.66,"msgs":325,"positions":[0.5953565505804311],"turns":[429806,128815,56584,151070,167914,64698,224574,100635,96657],"start":"2026-02-23T17:47:19.361Z"},{"id":"5217eb5b","slug":null,"compacts":63,"sizeMB":123.39,"msgs":12423,"positions":[0.016634676903390915,0.024397526124973343,0.04380464917892941,0.06483258690552357,0.0780123693751333,0.09383663894220516,0.11870334826188952,0.1216464064832587,0.12565579014715292,0.13606312646619748,0.15384943484751545,0.1749200255918106,0.19714224781403283,0.21215611004478566,0.22490936233738537,0.23988057155043718,0.2490936233738537,0.2656429942418426,0.2869268500746428,0.32339518020899977,0.3346982298997654,0.3443804649178929,0.36114310087438684,0.38421838345062914,0.39530816805288976,0.4252505864789934,0.43561526978033693,0.4533162721262529,0.46777564512689274,0.48278950735764553,0.4889741949242909,0.49916826615483045,0.5137129451908723,0.5413947536788227,0.562635956493922,0.5795692045212198,0.6127105992748987,0.6289613990189806,0.6410748560460653,0.6531030070377479,0.6702921731712519,0.6871827681808488,0.6949456174024312,0.709746214544679,0.7243335465984219,0.7383663894220516,0.745617402431222,0.7588824909362337,0.7741096182554916,0.800682448283216,0.8177436553636169,0.8262742589038174,0.8354020046918319,0.8532736191085519,0.8634676903390915,0.8810407336319045,0.8996374493495415,0.9138835572616762,0.929153337598635,0.9465984218383451,0.9643847302196631,0.9753892087865217,0.9966304116016208],"turns":[454692,523107,226583,95274,111237,35126,118212,556337,60192,61460,77325,329892,36973,33781,566783,39888,32309,39811,37038,170132,49148,60991,224384,72883,132668,199720,1132817,346494,793363,61693,113010,97502,288939,52048,205491,47230,66173,667999,246427,96250,796589,80547,31715,154220,107453,192882,58786,165349,50522,138177,171821,42530,140197,35364,36641,33278,42045,178060,30373,46479,31133,122170,33238,85785,48613,138901,53428,52790,114621,76993,486411,36848,55009,77147,1073006,30457,983967,127081,118949,55330,140793,74932,173360,297071,62463,61523,232866,443335,87811,45069,166511,1050276,308511,215178,43534,806316,92272,65866,53318,34199,128356,70181,45744,65166,427327,67253,69948,131013,129576,176008,31078,417598,107482,81198,89912,325614,122719,30013,209941,206660,285415,465299,175425,221457,73398,62175,472561,72119,54304,52328,188701,89382,268376,49751,98328,81575,93407,73312,106943,63584,72561,364890,91483,47615,84906,149249,39783,57020,85089,34388,95656,101887,173228,51821,57732,650336,552532,1025589,136455,249840,236868,162629,1046623,194217,65091,516557,81055,434640,80275,296136,511485,47851,140114,111675,435969,43017,221023,76982,44700,148321,452660,351455,281478,52135,128957,234236,1367359,194397,470969,223468,62575,527225,81849,55727,215968,393133,75189,71454,37526,430156,57232,378353,286842,145722,526285,36358,92261,76246,208649,43699,841042,94603,155886,1036302,440343,146365,666347,384377,130686,31523,57355,334258,281658,35083,36027,316494,509127,339672,1303467,160430,44506,93698,45991,57660,61672,224605,86318,391097,595580,266396,514149,563231,40960,139847,251415,262544,878626,542563,189546,68387,304714,571394,31603,189712,432120,59034,87817,62336,206006,124337,39549,124873,328229,129532,232418,108336],"start":"2026-02-23T18:40:58.800Z"},{"id":"62055388","slug":null,"compacts":4,"sizeMB":9.97,"msgs":1402,"positions":[0.20967051775780915,0.4124946512623021,0.5331621737270005,0.6837826272999572],"turns":[110573,202471,63033,41044,100458,726060,55342,32729,2289833,357043,347593,38951],"start":"2026-02-23T18:53:00.091Z"},{"id":"e9bbf5a0","slug":null,"compacts":0,"sizeMB":1.32,"msgs":32,"positions":[],"turns":[266886,43830],"start":"2026-02-24T07:10:04.192Z"},{"id":"c6834a2c","slug":null,"compacts":16,"sizeMB":32.25,"msgs":4313,"positions":[0.04902191845392411,0.10853169926938487,0.16061748762667924,0.20928588263021447,0.26855998114541596,0.32665566815932123,0.41810040065991044,0.5024746641527221,0.6277398067405138,0.6668630685835494,0.7261371670987509,0.7567758661324534,0.8294838557624322,0.8766203158142823,0.9349516851284468,0.9740749469714824],"turns":[1212372,178313,1013094,48715,231693,492238,105747,51414,31802,46641,282930,483484,273395,49699,76608,80861,138308,292264,132201,55613,33953,73151,49048,32250,77346,47516,46219,58526,136303,48447,70274,175818,35968,35948,128637,135394,39607,151351,442931,441522,868092,359083,374443,235698,278972,164376,216781,133653,402010,349213,44342,676180,52948,62944,82524,51733,468976,39997,88869,297752,81530,215073,506429,81075,62759,868710,60999,116290,210234,757721,70688,45405,337711,166801,614023,264019,30476],"start":"2026-02-24T10:29:01.865Z"},{"id":"8c2bbd18","slug":null,"compacts":9,"sizeMB":18.7,"msgs":2402,"positions":[0.18669009444322424,0.2881616516582473,0.3448275862068966,0.45486492422578517,0.5967493960026357,0.6953656929497035,0.7799253239622227,0.8550406325499671,0.9442126070722601],"turns":[1120332,175819,244516,638049,214737,183962,64003,159197,47534,80785,394061,132289,339382,220764,326880,287288,126116,34693,78685,293227,754672,380912,112570,163712,432153,415040,45913,99753,33098,32718,131026,56750,165595,116545,207665,103533,192945,328092,140602,148358,38037,35917,486108,62884,435189,366589,615956,99740,203289,619531,210730,88917,63774,31711,248177],"start":"2026-02-25T13:38:01.548Z"},{"id":"c0ee07cb","slug":null,"compacts":8,"sizeMB":16.11,"msgs":1956,"positions":[0.11630009038867128,0.24344682133172643,0.3458873154564628,0.4706236818318771,0.6010846640554384,0.73214823742091,0.881590840614643,0.9581199156372401],"turns":[39342,168235,79577,134432,39135,33546,114602,851101,104531,42181,72843,108907,118042,112392,189960,108525,63479,63547,541586,950083,144004,184579,106604,352897,100686,368942,238902,353929,243931,165756,161249,74687,99482,207598,112065,935049,100986,77272,509638,333635],"start":"2026-02-26T12:06:44.043Z"},{"id":"238b881b","slug":null,"compacts":10,"sizeMB":19,"msgs":2591,"positions":[0.12572623750871484,0.20613525447362305,0.3090866837090402,0.42203114106437367,0.5061584940739019,0.6135254473623054,0.686033000232396,0.7780618173367418,0.8563792702765513,0.9240065070880781],"turns":[715159,96811,1171148,435369,139292,312209,90056,398072,37310,195111,146345,79330,1613339,364499,486301,45159,129393,38820,292150,43865,286184,116049,415721,95614,73357,99462,83788,444042,206815,376865,350153,45635,50472,563409,123978,185326,346151],"start":"2026-02-26T13:56:11.229Z"},{"id":"0e2f145d","slug":null,"compacts":6,"sizeMB":11.71,"msgs":1282,"positions":[0.12889908256880733,0.3155963302752294,0.5009174311926605,0.7041284403669725,0.8334862385321101,0.9389908256880733],"turns":[1006366,242648,468370,513843,339087,600912,77640,586121,522501,1552046],"start":"2026-02-26T17:43:16.293Z"},{"id":"4c45b3eb","slug":null,"compacts":3,"sizeMB":11.27,"msgs":933,"positions":[0.3246831623415812,0.5781532890766445,0.7477368738684369],"turns":[108543,568326,248712,100203,299934,247723,131838,625604,250381,55292,32726,267685,270666,151002,255642,88271,156755,407517,447775,346343,160187,39606,47057,59614,35153,42308,43762],"start":"2026-02-26T21:46:25.999Z"},{"id":"3aeee0d6","slug":null,"compacts":4,"sizeMB":12.59,"msgs":1677,"positions":[0.23835501468736886,0.46747796894670585,0.6911456147712967,0.9282417121275703],"turns":[60013,55121,51080,275419,150572,162527,82378,102108,37116,97730,38879,101222,259354,304621,128141,42785,45204,53976,37299,53983,293897,184219,93900,198043,150598,408374,92789,133817,44302,180213,32613,61217,151337,61195,89447,72299,35478,120575,417084,46414,126332,37277,61814,37808,50360,78451,36057,33551,297152,205775,53864,836123],"start":"2026-02-27T13:27:12.262Z"}];
+const SESS = [{"id":"0b3816c6","slug":null,"compacts":12,"sizeMB":24.07,"msgs":3949,"positions":[0.03797865662272442,0.07815442561205273,0.13402385436283742,0.18314500941619585,0.3032015065913371,0.3855932203389831,0.43957940991839295,0.5916509730069052,0.6307281858129316,0.7324231010671689,0.7840552416823603,0.8465160075329566],"turns":[59829,51257,88159,70800,60679,51346,335947,96001,840793,255440,529615,334198,46111,346115,369628,1016042,178386,46567,64120,521209,517001,332150,298683,275031,77717,79573,275992,99931,324782,74860,232597,185750,91932,799700,746701,139073,228487,1044913,497585,42688,786799,420559,500539,247512,100482,360626,324418,269909,341513,391584,574926,323542,205238,445293,158344,196324,265496,328626,59817,75874,40931,44792,154588,89043],"start":"2026-01-30T22:55:36.621Z"},{"id":"476d363c","slug":null,"compacts":12,"sizeMB":28.92,"msgs":5268,"positions":[0.08999503475670308,0.17713505461767626,0.21487090367428005,0.2733366434955313,0.3272095332671301,0.39014399205561073,0.4426514399205561,0.5104270109235353,0.6063803376365442,0.7343594836146972,0.8424776564051638,0.9402929493545183],"turns":[426706,98872,84789,66092,55334,32123,166892,475566,176907,47895,79540,43673,48085,84789,50861,41665,300433,68046,75139,261747,59932,217883,262066,602659,41712,84047,75684,33902,33007,245397,337246,77991,104488,178902,371539,32089,438365,116478,50593,441857,31658,48079,137631,148533,160407,155699,259622,173049,181615,85059,69247,62612,86897,60043,49054,47259,47824,186135,56934,345255,494018,41900,57066,133511,161304,113348,39296,64040,75093,71451,279692,164067,151925,68263,195173,162195,102769,41239,351149,46734,40919,97736,125756,36885,46305,32386,153703,281354,50578,35368,114175,78165,52010,84345,124197,350608,55266,38448,125329,148005,105573,73180,50542,305147,86818,69713,58997,33681,365577,430576,102795,182412,252711,114947,76781,31153],"start":"2026-02-01T09:07:35.554Z"},{"id":"88879cc6","slug":null,"compacts":0,"sizeMB":0.38,"msgs":51,"positions":[],"turns":[34686,36233,158785],"start":"2026-02-02T23:30:46.143Z"},{"id":"8ea02743","slug":null,"compacts":5,"sizeMB":8.6,"msgs":1770,"positions":[0.1574832464631422,0.38049143708116157,0.45606850335070737,0.7021593447505584,0.9158600148920327],"turns":[71588,253822,70030,47863,90658,72312,33529,158350,151915,298256,292793,46081,392764,212088,266132,51839,45064,75924,70616,184166,111462,41109,58583,99308,44026,71824,51772,41590,474418,236714,194509,249502,316575,57941,252300,211924,172482,118793,128380,112708,507891,30659],"start":"2026-02-03T03:03:50.615Z"},{"id":"fee368b3","slug":null,"compacts":21,"sizeMB":36.15,"msgs":7397,"positions":[0.04242646385045359,0.09511591679648126,0.15366993493997985,0.19114817190506736,0.2606066159626134,0.32630807294052966,0.3740492990011912,0.4084119857051223,0.4471730963071566,0.4968386328232383,0.5405479703106387,0.5956199028681389,0.6424447906166957,0.6849628882983597,0.7350865939704939,0.7846604966553652,0.8143498579675617,0.8598918720791716,0.8938880234582608,0.9190873270411436,0.9630715660221754],"turns":[113302,146231,88542,102280,97434,419016,273630,131706,56803,39093,149046,54678,106576,43163,411239,36209,279974,54089,34416,43975,90035,52147,191581,79071,111305,305533,85479,99892,52268,205881,32584,70120,492973,75079,44392,165573,31187,81063,71840,109517,113206,318192,51806,40778,251803,31627,113672,39816,166653,259748,39826,82657,702291,146325,132686,313107,36474,30325,61696,69538,225880,45949,47469,49592,147799,38421,42944,515793,36762,85089,54715,41221,132426,447750,317221,32297,107060,178075,80946,369020,58570,46008,37268,347640,210159,118062,30490,175162,56489,60091,183905,41757,134468,48386,133453,36747,45135,35913,66491,37248,317102,463514,251936,585433,153511,45317,188683,91667,88684,82000,48392,361296,116930,50161,74880,51563,35479,101664,157219,40289,51666,575014,73342,78940,45419,124565,44091,77172,32833,118967,39103,107299,225458,132639,617931,146611,104634,287114,177632,35861,56087,102609,309254,55234,52194,306582,169341,193243,486558,273428,252461,139638,56790,33528,120711,118438,94023,50275],"start":"2026-02-03T08:26:19.719Z"},{"id":"1807d12a","slug":null,"compacts":0,"sizeMB":0.2,"msgs":10,"positions":[],"turns":[66559],"start":"2026-02-04T14:00:03.301Z"},{"id":"07e6d1f6","slug":null,"compacts":9,"sizeMB":13.95,"msgs":3054,"positions":[0.12480359147025814,0.22850729517396184,0.3288439955106622,0.4161616161616162,0.4769921436588103,0.6388327721661055,0.6978675645342312,0.8291806958473625,0.9887766554433222],"turns":[40501,47542,162593,129093,56604,43535,81987,44295,49816,77861,349235,165875,274816,170152,40346,35292,80119,421837,291922,42090,32146,64718,58572,33709,165998,125537,108499,42709,40281,83290,110580,74019,240966,49636,47252,47578,159926,152245,41550,308363,44498,143416,51070,51906,205899,52335,31076,224299,48597,79561,65130,34096,41031,204806,97339,199104,55888,132213,35873,42816,436021,217787,165475,38850,86915,66859,72422,59484,39622,275194,45856,79077,34067,505266,126096,105757,167157,58601,63216],"start":"2026-02-04T14:11:00.620Z"},{"id":"ca858525","slug":null,"compacts":6,"sizeMB":10.83,"msgs":2752,"positions":[0.13786716062450383,0.2304842550939402,0.36279439005027786,0.5347975654935168,0.7097115639057952,0.8232336596983328],"turns":[87817,161137,37088,42919,68084,60243,78578,198233,123893,163773,233545,40880,281631,58842,436157,55278,40634,88465,220554,112532,209505,775569,56768,80163,36662,33145,68740,181179,79209,239956,84922,159078,175155,102298,151687,132975,41113,58782,62687,72004,185279,56894,109145,115057,168659,159930,427625,599497,244261],"start":"2026-02-04T15:16:11.107Z"},{"id":"a3695db8","slug":null,"compacts":24,"sizeMB":46.22,"msgs":9200,"positions":[0.053818932468298435,0.09407254497198467,0.13071365378944264,0.1809938071365379,0.22316425833087586,0.2625331760542613,0.2920967266293129,0.3275582424063698,0.3636832792686523,0.40895016219404307,0.44699203774697727,0.4840017693895606,0.5248451784134474,0.5647301680920083,0.6125774107932763,0.6547478619876143,0.6860808021232675,0.7264081391919788,0.7601002654084341,0.8069890887643763,0.8403125921557063,0.8585225597168976,0.9012090828664111,0.958935417281038],"turns":[188681,308497,269388,77151,53526,180177,144859,36621,306142,80888,79566,341803,53098,134487,202258,322848,90115,296655,60208,164329,683722,140463,33205,87841,114028,116090,217097,33399,58704,321826,351273,409431,127947,38438,145287,443192,132837,56107,73161,58444,30138,176774,55803,144258,552017,149849,70860,126727,419245,31877,79948,106231,187995,154634,110054,47456,442788,30364,69219,67250,82638,44229,48467,190082,34577,39911,48467,196402,72564,87138,79343,49749,33273,59141,56802,40287,289381,52702,33196,44683,54671,34422,111915,43535,60525,39465,150825,96674,49971,48330,219916,339555,72076,108687,86242,49359,39252,137155,200149,149144,110599,113956,84627,58783,55943,133299,190900,76909,110031,61784,43781,56162,46388,64864,51234,34428,218644,90635,46550,34583,36393,60370,51137,41472,52624,142599,82494,81207,131930,33302,36123,36677,51939,87699,116080,57196,33124,66323,244762,188508,148489,69435,77424,99620,97374,169549,65447,62250,32334,100056,47206,40292,45276,113144,277916,141653,119310,152724,135297,344970,229561,49752,181164,112299,108972,100305,79749,65596,64690,55704,62059,39446,85320,118437,33994,170873,491964,143161,132964,195167,641224,913640,531108,1060671],"start":"2026-02-06T03:12:27.050Z"},{"id":"f756e15b","slug":null,"compacts":4,"sizeMB":8.28,"msgs":1723,"positions":[0.17688330871491875,0.3652141802067947,0.6059822747415067,0.8131462333825702],"turns":[103210,43491,69780,46538,42492,33881,228794,35303,31892,33265,117674,32875,147069,407920,209112,174946,231254,231504,212043,44407,259953,315693,83453,55696,70988,47993,1156273,85374,65617,127414,60331,93445,63260,39817,125737,68236,82099,112986,328670,109775,156762,265333,187175,80726],"start":"2026-02-06T07:15:50.895Z"},{"id":"eb5804a9","slug":null,"compacts":0,"sizeMB":1.25,"msgs":44,"positions":[],"turns":[],"start":"2026-02-06T10:55:37.309Z"},{"id":"1b4badea","slug":null,"compacts":17,"sizeMB":32.87,"msgs":6033,"positions":[0.06355241716458447,0.13709940249864205,0.19435089625203694,0.2557305812058664,0.30048886474741987,0.36230309614340034,0.4329168929929386,0.49560021727322107,0.5490494296577947,0.6111895708853884,0.663335143943509,0.7057034220532319,0.7467680608365019,0.7918522542096686,0.8514937533948941,0.9204780010863661,0.9655621944595328],"turns":[366260,294310,202690,225729,549246,182028,251661,219358,95737,82563,59492,54676,44210,166050,1015430,200671,207183,70376,178740,271993,231272,85131,191367,86077,120500,97801,258651,80683,95069,77747,63756,31682,86478,46513,35158,67159,147083,90385,674440,56640,61884,46642,275242,68728,131089,822318,123518,92411,55011,137750,41012,34494,251788,34240,32349,40644,67881,33939,31316,115417,32409,73559,38978,118010,117761,230350,41673,43768,89589,55324,129322,68277,33918,121696,40715,45662,50022,42774,233351,157393,101394,69818,43425,190628,182888,154426,35458,31931,417193,95519,30982,97866,228865,315805,45154,210775,87110,69566,114445,379049,412386,105720,121260,141867,271347,368860,59544,270776,89912,41560,87057,1116715,296917,136879,154331,189686,57203,53002,91272,35714,39105,672380],"start":"2026-02-06T11:08:30.286Z"},{"id":"b0ecfa4d","slug":null,"compacts":0,"sizeMB":0.56,"msgs":71,"positions":[],"turns":[37419,255710,50837,89818,79035,91425,166375,84698,145942,245453],"start":"2026-02-06T21:10:07.198Z"},{"id":"0bc0fa59","slug":null,"compacts":0,"sizeMB":0.65,"msgs":107,"positions":[],"turns":[102461,202933,34685,229238],"start":"2026-02-07T11:17:08.667Z"},{"id":"cad880e2","slug":null,"compacts":1,"sizeMB":3.39,"msgs":493,"positions":[0.8489968321013728],"turns":[407549,48570,62328,102292,105106,255348,64321,114351,131250,358399,57927,31884],"start":"2026-02-07T11:59:51.757Z"},{"id":"9bc41275","slug":null,"compacts":5,"sizeMB":60.66,"msgs":2394,"positions":[0.1431919381298336,0.27536911178814155,0.41481134286383875,0.5526130771033513,0.7408014998828216],"turns":[64893,147067,98530,46852,41502,34711,47317,85057,30783,287674,232389,135184,55458,45989,42755,161380,166713,35458,30097,280800,41994,100247,78974,110793,105464,111733,48427,180066,30915,167657,95892,147880,89038,220034,312635,64329,196933,72996,174326,287220,79786,155249,377781,58210,130996,142476,345533,77049,85579,150095,75110,94448,67974,157969,127413,88996,57623,266199,105009],"start":"2026-02-08T02:35:04.042Z"},{"id":"e6f18861","slug":null,"compacts":2,"sizeMB":3.45,"msgs":756,"positions":[0.4900181488203267,0.9392014519056261],"turns":[157301,144167,204329,99088,32825,45539,209239,143396,156053,83353,84926,205231,79014,51642,33595,43685,52045,184301,37817,35929,144034,54041],"start":"2026-02-08T02:57:48.843Z"},{"id":"ae9d40de","slug":null,"compacts":15,"sizeMB":34.02,"msgs":5828,"positions":[0.04117379435850774,0.10259326660600546,0.16856232939035487,0.20825750682438582,0.26888080072793447,0.3374658780709736,0.4177661510464058,0.4830527752502275,0.5578935395814377,0.6267060964513194,0.7060964513193813,0.794813466787989,0.8743175614194723,0.9481346678798908,0.9995450409463148],"turns":[35979,213202,347436,177107,74060,93786,67235,380631,61446,348720,126969,259721,32493,83782,164843,192706,154726,49123,92172,40110,175505,46941,71922,160408,44708,39933,49715,75222,100323,70733,71268,35017,77231,278669,33681,67608,46899,32850,186460,85843,81839,44818,43400,44306,49151,40590,297813,143936,116245,35864,179035,70132,148386,36726,161184,130614,161816,93020,32088,47536,77428,165788,40680,125052,192942,64226,80876,36100,318843,76874,30645,51454,32424,67965,48411,66342,164687,202775,116384,170991,133222,80790,111043,36413,95040,103177,89055,306082,123977,118876,40644,40368,146497,69710,35082,105509,35501,47662,51911,35813,218904,62663,32171,233714,260423,116262,64007,165384,145442,35416,58614,32730,52437,55532,40777,215879,57061,63288,221985,96446,93408,82814,88304,35300,142412,157896,73643,83757,46609,46140,368815,320441,138893,63002,58350,98262,33240,247867,147598,30481,53328,259115,121226,62069,198086,210066,41407,61383,40210,42313,51233,64838,39552,140886,45981,199335,35495,73325,78407,73460,80441,30480,35568,46414,87157,42656,42164,168639],"start":"2026-02-08T08:08:29.873Z"},{"id":"da54d577","slug":null,"compacts":0,"sizeMB":1.33,"msgs":289,"positions":[],"turns":[81426,73982,256318,224351],"start":"2026-02-08T09:07:30.285Z"},{"id":"b52cae33","slug":null,"compacts":5,"sizeMB":11.88,"msgs":1778,"positions":[0.2796005706134094,0.44436519258202567,0.7157631954350927,0.8327389443651926,0.9803851640513552],"turns":[272033,185194,167701,181323,41294,64485,35321,46074,68605,135499,122670,52697,222275,290160,236438,89750,116853,65915,110398,47608,76196,66422,38297,36896,33196,32395,37372,83438,30542,50905,176943,210379,85481,59699,213624,37960,36596,42888,33252,717306,102377,47263,33945,32241,32994,38937,40608,48734,143352,137255,82394,67389,178494],"start":"2026-02-09T11:11:14.503Z"},{"id":"cc2859b8","slug":null,"compacts":10,"sizeMB":19.94,"msgs":3562,"positions":[0.13633998265394623,0.24284475281873374,0.3113616652211622,0.38352124891587164,0.5045967042497832,0.6194275802254987,0.7398091934084996,0.8392020815264527,0.9210754553339116,0.9887250650477016],"turns":[74090,48836,64991,323136,33645,229726,102441,385946,38728,55212,166718,512633,346682,171468,42063,40157,354524,375899,239501,88281,46376,58817,185648,241096,44994,61601,46576,51304,57380,113996,61496,118402,61067,87358,70727,208642,533447,228120,115760,129384,395025,65585,108454,81216,56581,53169,118298,61791,147781,36242,63619,85567,53126,31228,169557,616371,37317,128629,81437,33839,34460,71485,41701,61950,32437,186556,274365,37547,48421,63757,167866,42963,103863,97541,134354,37233,73574,73880,255075,196545,521689,73947,83305,262128,345290,155388,385012,90566],"start":"2026-02-09T17:58:46.046Z"},{"id":"f47fe323","slug":null,"compacts":12,"sizeMB":26.13,"msgs":3995,"positions":[0.040373707040373706,0.11695028361695028,0.21888555221888556,0.28178178178178176,0.3875542208875542,0.48281614948281615,0.579245912579246,0.6628294961628295,0.7409075742409076,0.828661995328662,0.8913913913913913,0.9773106439773106],"turns":[57628,51311,220712,40158,260712,32918,46235,78182,57556,76809,430812,148794,178891,224406,239706,370593,203907,67163,67868,35484,39104,42712,441780,35167,223777,82276,94253,89568,100981,48316,44526,125342,137677,115986,64982,61098,274280,53579,71987,73847,130858,33079,79600,133217,68274,32725,359624,110645,35600,56090,37005,93014,48796,34686,36363,111413,53409,40257,271402,126373,32728,77804,101238,113812,36782,34838,39325,37450,79673,261711,44379,72991,78133,41986,218012,66156,145646,64158,68162,71616,97508,190706,232484,55712,162239,45644,72014,79629,42976,31691,32736,50472,136399,321276,99671,49549,103048,72439,121364,56628,42673,147516,265962],"start":"2026-02-11T07:12:06.671Z"},{"id":"570f6ea8","slug":null,"compacts":0,"sizeMB":1.61,"msgs":130,"positions":[],"turns":[122403,49167,86268],"start":"2026-02-11T07:24:34.544Z"},{"id":"6e47d1f1","slug":null,"compacts":11,"sizeMB":24.38,"msgs":4920,"positions":[0.09444063143445436,0.21564859299931366,0.315442690459849,0.39958819492107067,0.508716540837337,0.5902539464653397,0.6432395332875772,0.7376801647220316,0.8237474262182567,0.8955387783115992,0.9766643788606726],"turns":[185800,61485,130306,88501,76245,52185,87858,136357,78415,34500,194716,40744,69906,36978,119459,81667,34644,83793,212795,196606,85800,34729,80876,35882,274534,65471,30734,145111,40535,312431,72501,138431,41867,88013,84292,219112,148923,332368,34315,92521,32126,40441,63510,460739,43159,46519,241392,212046,113430,101273,127295,107215,43017,45299,48898,37316,455784,61110,36059,277637,162831,530005,306290,135560,241082,36818,42401,42676,269586,332637,41040,306580,42932,216927,96876,36811,36409,275788,34051,78961,58895,87292,133054,130560,80222,35082,112339,30330,56520,198282,31411,177163,55609,57571,108036,78108,48456,84945,49065,41338,34351,37546,33082,113339,44608,52315,254409,30033,91186,45026,57314,39673],"start":"2026-02-11T08:24:58.272Z"},{"id":"1715a9a5","slug":null,"compacts":6,"sizeMB":12.93,"msgs":2326,"positions":[0.10186298076923077,0.16766826923076922,0.3368389423076923,0.5354567307692307,0.7124399038461539,0.9266826923076923],"turns":[32590,37884,53918,44074,32151,91930,56260,197489,109365,165847,80388,53158,44627,77045,183758,384295,159111,39176,256297,225786,35950,236873,519117,97396,138112,106389,123555,61090,121788,154385,34086,108268,191975,60973,39595,54252,51077,78163,30209,60856,195377,413249,236279,83912,77064,48831,35732,32020,40370,75832,440882],"start":"2026-02-16T08:07:24.777Z"},{"id":"e201e6be","slug":null,"compacts":29,"sizeMB":81,"msgs":11789,"positions":[0.028725410940447317,0.04532471032066828,0.08676906494206413,0.10595526812180005,0.1434653732147669,0.1793586634330369,0.21153327943950417,0.2460253300997036,0.2784155214227971,0.3136081918620318,0.3572621934788467,0.3841552142279709,0.4216114254917812,0.44295338183777955,0.4919967663702506,0.5302613850714093,0.5692266235516034,0.6047426569657774,0.6428455941794664,0.6585286984640258,0.7018054432767448,0.7555914847749933,0.7720291026677445,0.7924548639180814,0.8259229318243061,0.871301535974131,0.8855834007006198,0.9103206682834816,0.9324171382376718],"turns":[438376,130779,41594,86221,57152,53935,68613,80904,507254,134201,31460,238615,67806,391934,150492,47991,98427,187425,38985,130490,102373,40432,590520,172938,66317,206658,77124,177452,45475,132726,452968,62136,475630,41297,179927,209287,59395,98221,61306,47465,62908,35574,33074,120402,380914,87261,82419,31571,30756,225088,82371,51929,77856,60396,40392,173620,314285,272385,49434,267912,34037,54206,73364,82036,39609,317333,248916,83237,44078,43664,34353,183576,48454,75466,55505,30672,209903,219743,35084,136616,121797,54984,66955,206713,156084,119246,86312,139757,39047,138622,129004,42978,59811,58753,107137,50964,277248,279640,85457,49635,97212,57490,194872,185130,36801,68862,82409,141621,33568,42049,43778,31407,157224,31471,733278,135060,82635,122783,41441,95434,738425,201273,201813,106717,56410,88308,34151,133881,326823,73206,167723,194763,59143,170034,33006,343340,59775,163000,43801,135253,33184,75598,138601,156804,85550,113942,360613,43997,186257,194543,126873,120478,34434,125824,314599,174426,197705,221935,42620,183726,37845,78475,32215,59112,98516,66496,117666,57254,41123,84059,51596,196678,50168,90508,43321,46391,30706,57388,271475,84800,165956,138193,145865,34574,105543,252749,203460,86921,89914,36231,58326,36407,50896,53609,238377,221885,108800,35408,146069,123960,88240,126911,75098,40976,33653,67559,532768,103625,272910,104718,132533,286760,79692,374458,72341,58398,154492,85636,125967,126503,434716,114210,276659,94177,63735,523568,59094,284763,196692,42626,200275,140047,140924,39248,100037,145792,118534,224453,182271],"start":"2026-02-16T08:44:11.820Z"},{"id":"1150700c","slug":null,"compacts":4,"sizeMB":12.38,"msgs":1950,"positions":[0.16306549628629305,0.3261309925725861,0.5921674544226874,0.824442943956786],"turns":[51493,256650,76453,72089,112765,84928,150042,161114,45599,258171,79601,142470,266202,48969,79078,43887,69362,39392,35371,31317,38197,224088,67817,56390,113956,43124,85167,143821,136699,126610,59307,222336,55777,66912,88652,31176,367242,126651,77930,242796,75945,70758,73523,66909,127139,30492,57701,99864,67252,36715,36112,48778],"start":"2026-02-17T01:18:54.455Z"},{"id":"fe8ed20e","slug":null,"compacts":0,"sizeMB":2.09,"msgs":348,"positions":[],"turns":[823031,499082],"start":"2026-02-18T11:14:59.376Z"},{"id":"2c99e2af","slug":null,"compacts":0,"sizeMB":1.88,"msgs":168,"positions":[],"turns":[469138],"start":"2026-02-18T11:41:01.913Z"},{"id":"e913fada","slug":null,"compacts":5,"sizeMB":12.2,"msgs":1469,"positions":[0.22922636103151864,0.3578080229226361,0.5848853868194842,0.9831661891117478,0.995702005730659],"turns":[31984,39546,169003,202064,465856,240268,43703,276979,225616,339554,449175,2613616,109048,656081],"start":"2026-02-18T12:53:28.631Z"},{"id":"bd5c0741","slug":null,"compacts":0,"sizeMB":5.64,"msgs":406,"positions":[],"turns":[525618,526207,238876],"start":"2026-02-18T12:59:35.635Z"},{"id":"060ccecd","slug":null,"compacts":4,"sizeMB":13.37,"msgs":1296,"positions":[0.13836921990822448,0.32439110483586303,0.48499823508648077,0.9647017296152488],"turns":[301079,56896,163054,364460,942406,41745,657701,618419],"start":"2026-02-18T15:34:40.794Z"},{"id":"09d2c3e1","slug":null,"compacts":1,"sizeMB":4.67,"msgs":574,"positions":[0.6629464285714286],"turns":[248661,345810,328714,1209299],"start":"2026-02-19T07:32:03.373Z"},{"id":"f66b9c67","slug":null,"compacts":3,"sizeMB":5.3,"msgs":729,"positions":[0.16576297443841984,0.4384198295894655,0.6560805577072037],"turns":[47939,50977,82141,44282,99009,73910,58335,48858,45657,47796,207012,110778,244988,50309,433466,50123,182236,106135,185909,360512,105873,786756,51288,490168,31310,72246,44791,51692,38932,38160,38297],"start":"2026-02-19T07:33:09.435Z"},{"id":"e0f11cc1","slug":null,"compacts":24,"sizeMB":52.34,"msgs":6536,"positions":[0.30763105507631056,0.31844724618447245,0.35938951559389515,0.40039814200398144,0.427936297279363,0.4559389515593895,0.48925016589250164,0.5307896483078964,0.5595222295952222,0.5727936297279363,0.5988055739880558,0.6382879893828799,0.6741207697412077,0.7078964830789648,0.7377571333775713,0.7753815527538155,0.8111479761114797,0.8364963503649635,0.8576642335766423,0.8911081619110817,0.9150630391506304,0.938420703384207,0.9633709356337093,0.9842070338420703],"turns":[676103,453189,32687,40041,42651,79716,63022,149349,38869,1114271,368286,631726,41595,549996,778895,837442,43393,823519,317591,57658,34874,125272,507284,273652,637497,290238,153165,193267,271548,32625,46171,91632,599865,844029,785250,410229,266182,96932,145526,64797,43866,156429,170800,44946,297275,38945,44930,94929,463562,114170,1282939,474165,55187,113795,294329,87734,332814,39742,48480,158865,603249,193615,239501,37756,465466,52957,515473,119137,143185,153203,77663,515466,108053,245934,58728,59068,508534,516651,232186,125920,436131,182612,209828,248553,53263,422569,364047,56472,552449,485066,43287],"start":"2026-02-19T10:08:15.456Z"},{"id":"6dec3bdf","slug":null,"compacts":17,"sizeMB":25.91,"msgs":3433,"positions":[0.10168528687748532,0.16833932967241053,0.21548949062677522,0.2963453891308464,0.3374360916493088,0.40200719560689263,0.45900397651959857,0.492899072145427,0.5462980496118159,0.6114372277977655,0.670138231395569,0.7129331565991289,0.7739064571103957,0.8197311115319068,0.8460518841128574,0.9123272107555387,0.9458435902291232],"turns":[127135,101034,143639,206134,85653,85531,40417,794397,125608,218021,144009,2820527,1960738,481601,38697,1081666,32760,138204,70750,135380,40850,1336913,69529,283794,303815,106730,359717,70050,212028,203732,88483,147877,117755,2202216,34255,2912684,1433939,76006],"start":"2026-02-19T11:43:30.272Z"},{"id":"63a10e91","slug":null,"compacts":4,"sizeMB":7.57,"msgs":1013,"positions":[0.10313447927199192,0.378159757330637,0.5667340748230536,0.7477249747219413],"turns":[113857,171070,257976,92081,147797,263386,67842,389331,523902,160508,933316,310844,87165,77679,33165,41665,58223,40286,35680,53035,46597,48916,288545,41830,36828,98005,301622,84968,34862,118889,88756,154465,77402],"start":"2026-02-20T12:09:58.998Z"},{"id":"4203b515","slug":null,"compacts":15,"sizeMB":22.14,"msgs":3566,"positions":[0.058302321460216196,0.14052808789650895,0.19617224880382775,0.25943646996278574,0.30427077795498847,0.33067517278043596,0.4109516214779373,0.4713804713804714,0.5270246322877902,0.5665426191741981,0.6060606060606061,0.6608187134502924,0.734006734006734,0.8546872231082757,0.9284068757752968],"turns":[40837,72498,43411,56768,61165,218731,201207,37317,128363,648396,343223,33604,194531,32259,30996,36499,54277,31863,192054,248442,396733,55493,232293,1283328,678415,57194,559667,1045163,483119,709958,490038,294418,40063,349045,468680,132130,110881,601714,1127647,384047,657264,155568,477607,228451,32806,100862,246291,65838,220367,464210,130422,36354,52190,224236,248380,282804,164678,185961,175544],"start":"2026-02-20T17:01:28.978Z"},{"id":"81e460c3","slug":null,"compacts":11,"sizeMB":18.72,"msgs":2584,"positions":[0.376437289934548,0.4643552096232089,0.5292764903591014,0.6062267822395189,0.6387758712188218,0.6976826463824518,0.7266937909074828,0.7797629577215638,0.8330090217583584,0.9012913497258093,0.9844330444012029],"turns":[351076,74391,214001,72488,113440,66264,538312,41618,133590,281684,485617,44531,37402,164472,372779,128195,153717,31660,374130,38396,143854,322464,33948,397543,304690,101496,43581,469903,35297,277918,400903,36846,146047,124877,144416,103804,520264,279270,44708,840224,71525,283948,55375,585482,331967,32247,375663,250984,32077,94004,78582,136329,126239,288312,302426,438830,75100],"start":"2026-02-20T18:03:58.274Z"},{"id":"26281072","slug":null,"compacts":0,"sizeMB":2.64,"msgs":246,"positions":[],"turns":[47124,116367,1004658,400390,78881,37999,121681,49925,40405,34465,145132,31444],"start":"2026-02-21T15:35:43.401Z"},{"id":"47f60321","slug":null,"compacts":19,"sizeMB":33.44,"msgs":3948,"positions":[0.053400637619553666,0.0924548352816153,0.12964930924548354,0.15608395324123273,0.18809776833156217,0.21865037194473963,0.2822794899043571,0.3238575982996812,0.41246014877789583,0.4772848034006376,0.554596174282678,0.660201912858661,0.700451647183847,0.7203772582359192,0.7546493092454836,0.8133634431455898,0.8412592986184909,0.8812433581296493,0.9321200850159405],"turns":[872258,202196,212745,83574,232864,125855,33670,154303,391176,574132,159055,309650,796641,505618,214349,195534,443883,44426,31611,50395,100596,103680,167946,326489,379940,126544,680412,311466,52458,362759,157645,189280,148900,55833,199921,105591,568033,1118596,84423,75715,56938,142066,1067566,46647,612833,169783,136361,72004,1501644,62561,98803,922865,252980,93867,233576,81347,63892,32294,44561,203383,99745,87870,79517,40739,31712,70909,236741,113600,90651,40875,87613,72029,35941,156804,54832,275671,124461,132632,216724,68791,697987,43021,142021],"start":"2026-02-22T12:43:59.082Z"},{"id":"3cb666d8","slug":null,"compacts":0,"sizeMB":1.21,"msgs":204,"positions":[],"turns":[143903,233795,55706,177573],"start":"2026-02-22T12:52:37.735Z"},{"id":"3bfe9dd4","slug":null,"compacts":22,"sizeMB":40.49,"msgs":4457,"positions":[0.046481371969248966,0.08503843879361325,0.15446481371969248,0.21324659964518036,0.2528681253696038,0.29544648137196927,0.3497338852749852,0.37776463630987583,0.40283855706682437,0.43027794204612657,0.49603784742755763,0.5529272619751626,0.6352454169130692,0.6807806031933767,0.7332939089296274,0.7622708456534595,0.7926670609107037,0.8332347723240686,0.8720283855706682,0.9023063276167947,0.9422826729745712,0.9856889414547605],"turns":[38687,44095,132894,147462,60628,57197,812277,527296,69423,485211,130097,110175,67258,95918,202519,59548,171371,40939,1023472,618577,90253,61921,873860,359133,39363,32685,106233,312796,273496,38359,298997,133590,53510,409857,268974,39428,172651,95809,137508,296886,371441,74363,719347,78720,82599,100226,357468,38591,234557,357805,34499,46221,32463,186901,424110,65014,49409,89967,42052,398408,457505,71052,240334,178651,513661,691141,41455,41448,477308,167141,49481,118949,146002,234601,57057,378235,196536,221107,214494,417158,256695,32765,344316,75776,163926,46005,32999,175904,332359,55770,34404,308861,38534,40951,54368,183575,499672,620440,37487,531598,37934,511365,753830,52343,373691,108086,97995,311774,83239,102324,651697,141290,41412,227267,61704],"start":"2026-02-22T15:50:56.361Z"},{"id":"e6bb0412","slug":null,"compacts":0,"sizeMB":0.51,"msgs":30,"positions":[],"turns":[173206,73857],"start":"2026-02-23T06:18:25.674Z"},{"id":"c2cfd81f","slug":null,"compacts":1,"sizeMB":3.66,"msgs":325,"positions":[0.5953565505804311],"turns":[429806,128815,56584,151070,167914,64698,224574,100635,96657],"start":"2026-02-23T17:47:19.361Z"},{"id":"5217eb5b","slug":null,"compacts":63,"sizeMB":123.39,"msgs":12423,"positions":[0.016634676903390915,0.024397526124973343,0.04380464917892941,0.06483258690552357,0.0780123693751333,0.09383663894220516,0.11870334826188952,0.1216464064832587,0.12565579014715292,0.13606312646619748,0.15384943484751545,0.1749200255918106,0.19714224781403283,0.21215611004478566,0.22490936233738537,0.23988057155043718,0.2490936233738537,0.2656429942418426,0.2869268500746428,0.32339518020899977,0.3346982298997654,0.3443804649178929,0.36114310087438684,0.38421838345062914,0.39530816805288976,0.4252505864789934,0.43561526978033693,0.4533162721262529,0.46777564512689274,0.48278950735764553,0.4889741949242909,0.49916826615483045,0.5137129451908723,0.5413947536788227,0.562635956493922,0.5795692045212198,0.6127105992748987,0.6289613990189806,0.6410748560460653,0.6531030070377479,0.6702921731712519,0.6871827681808488,0.6949456174024312,0.709746214544679,0.7243335465984219,0.7383663894220516,0.745617402431222,0.7588824909362337,0.7741096182554916,0.800682448283216,0.8177436553636169,0.8262742589038174,0.8354020046918319,0.8532736191085519,0.8634676903390915,0.8810407336319045,0.8996374493495415,0.9138835572616762,0.929153337598635,0.9465984218383451,0.9643847302196631,0.9753892087865217,0.9966304116016208],"turns":[454692,523107,226583,95274,111237,35126,118212,556337,60192,61460,77325,329892,36973,33781,566783,39888,32309,39811,37038,170132,49148,60991,224384,72883,132668,199720,1132817,346494,793363,61693,113010,97502,288939,52048,205491,47230,66173,667999,246427,96250,796589,80547,31715,154220,107453,192882,58786,165349,50522,138177,171821,42530,140197,35364,36641,33278,42045,178060,30373,46479,31133,122170,33238,85785,48613,138901,53428,52790,114621,76993,486411,36848,55009,77147,1073006,30457,983967,127081,118949,55330,140793,74932,173360,297071,62463,61523,232866,443335,87811,45069,166511,1050276,308511,215178,43534,806316,92272,65866,53318,34199,128356,70181,45744,65166,427327,67253,69948,131013,129576,176008,31078,417598,107482,81198,89912,325614,122719,30013,209941,206660,285415,465299,175425,221457,73398,62175,472561,72119,54304,52328,188701,89382,268376,49751,98328,81575,93407,73312,106943,63584,72561,364890,91483,47615,84906,149249,39783,57020,85089,34388,95656,101887,173228,51821,57732,650336,552532,1025589,136455,249840,236868,162629,1046623,194217,65091,516557,81055,434640,80275,296136,511485,47851,140114,111675,435969,43017,221023,76982,44700,148321,452660,351455,281478,52135,128957,234236,1367359,194397,470969,223468,62575,527225,81849,55727,215968,393133,75189,71454,37526,430156,57232,378353,286842,145722,526285,36358,92261,76246,208649,43699,841042,94603,155886,1036302,440343,146365,666347,384377,130686,31523,57355,334258,281658,35083,36027,316494,509127,339672,1303467,160430,44506,93698,45991,57660,61672,224605,86318,391097,595580,266396,514149,563231,40960,139847,251415,262544,878626,542563,189546,68387,304714,571394,31603,189712,432120,59034,87817,62336,206006,124337,39549,124873,328229,129532,232418,108336],"start":"2026-02-23T18:40:58.800Z"},{"id":"62055388","slug":null,"compacts":4,"sizeMB":9.97,"msgs":1402,"positions":[0.20967051775780915,0.4124946512623021,0.5331621737270005,0.6837826272999572],"turns":[110573,202471,63033,41044,100458,726060,55342,32729,2289833,357043,347593,38951],"start":"2026-02-23T18:53:00.091Z"},{"id":"e9bbf5a0","slug":null,"compacts":0,"sizeMB":1.32,"msgs":32,"positions":[],"turns":[266886,43830],"start":"2026-02-24T07:10:04.192Z"},{"id":"c6834a2c","slug":null,"compacts":16,"sizeMB":32.25,"msgs":4313,"positions":[0.04902191845392411,0.10853169926938487,0.16061748762667924,0.20928588263021447,0.26855998114541596,0.32665566815932123,0.41810040065991044,0.5024746641527221,0.6277398067405138,0.6668630685835494,0.7261371670987509,0.7567758661324534,0.8294838557624322,0.8766203158142823,0.9349516851284468,0.9740749469714824],"turns":[1212372,178313,1013094,48715,231693,492238,105747,51414,31802,46641,282930,483484,273395,49699,76608,80861,138308,292264,132201,55613,33953,73151,49048,32250,77346,47516,46219,58526,136303,48447,70274,175818,35968,35948,128637,135394,39607,151351,442931,441522,868092,359083,374443,235698,278972,164376,216781,133653,402010,349213,44342,676180,52948,62944,82524,51733,468976,39997,88869,297752,81530,215073,506429,81075,62759,868710,60999,116290,210234,757721,70688,45405,337711,166801,614023,264019,30476],"start":"2026-02-24T10:29:01.865Z"},{"id":"8c2bbd18","slug":null,"compacts":9,"sizeMB":18.7,"msgs":2402,"positions":[0.18669009444322424,0.2881616516582473,0.3448275862068966,0.45486492422578517,0.5967493960026357,0.6953656929497035,0.7799253239622227,0.8550406325499671,0.9442126070722601],"turns":[1120332,175819,244516,638049,214737,183962,64003,159197,47534,80785,394061,132289,339382,220764,326880,287288,126116,34693,78685,293227,754672,380912,112570,163712,432153,415040,45913,99753,33098,32718,131026,56750,165595,116545,207665,103533,192945,328092,140602,148358,38037,35917,486108,62884,435189,366589,615956,99740,203289,619531,210730,88917,63774,31711,248177],"start":"2026-02-25T13:38:01.548Z"},{"id":"c0ee07cb","slug":null,"compacts":8,"sizeMB":16.11,"msgs":1956,"positions":[0.11630009038867128,0.24344682133172643,0.3458873154564628,0.4706236818318771,0.6010846640554384,0.73214823742091,0.881590840614643,0.9581199156372401],"turns":[39342,168235,79577,134432,39135,33546,114602,851101,104531,42181,72843,108907,118042,112392,189960,108525,63479,63547,541586,950083,144004,184579,106604,352897,100686,368942,238902,353929,243931,165756,161249,74687,99482,207598,112065,935049,100986,77272,509638,333635],"start":"2026-02-26T12:06:44.043Z"},{"id":"238b881b","slug":null,"compacts":10,"sizeMB":19,"msgs":2591,"positions":[0.12572623750871484,0.20613525447362305,0.3090866837090402,0.42203114106437367,0.5061584940739019,0.6135254473623054,0.686033000232396,0.7780618173367418,0.8563792702765513,0.9240065070880781],"turns":[715159,96811,1171148,435369,139292,312209,90056,398072,37310,195111,146345,79330,1613339,364499,486301,45159,129393,38820,292150,43865,286184,116049,415721,95614,73357,99462,83788,444042,206815,376865,350153,45635,50472,563409,123978,185326,346151],"start":"2026-02-26T13:56:11.229Z"},{"id":"0e2f145d","slug":null,"compacts":6,"sizeMB":11.71,"msgs":1282,"positions":[0.12889908256880733,0.3155963302752294,0.5009174311926605,0.7041284403669725,0.8334862385321101,0.9389908256880733],"turns":[1006366,242648,468370,513843,339087,600912,77640,586121,522501,1552046],"start":"2026-02-26T17:43:16.293Z"},{"id":"4c45b3eb","slug":null,"compacts":3,"sizeMB":11.27,"msgs":933,"positions":[0.3246831623415812,0.5781532890766445,0.7477368738684369],"turns":[108543,568326,248712,100203,299934,247723,131838,625604,250381,55292,32726,267685,270666,151002,255642,88271,156755,407517,447775,346343,160187,39606,47057,59614,35153,42308,43762],"start":"2026-02-26T21:46:25.999Z"},{"id":"3aeee0d6","slug":null,"compacts":5,"sizeMB":15.69,"msgs":2093,"positions":[0.19079610345985892,0.3742022169969768,0.5532415183070205,0.7430298958683238,0.8323815922069198],"turns":[60013,55121,51080,275419,150572,162527,82378,102108,37116,97730,38879,101222,259354,304621,128141,42785,45204,53976,37299,53983,293897,184219,93900,198043,150598,408374,92789,133817,44302,180213,32613,61217,151337,61195,89447,72299,35478,120575,417084,46414,126332,37277,61814,37808,50360,78451,36057,33551,297152,205775,53864,836123,585442,539014,79278,194907,58161,107486,60874,227623,83641,202602,43199,98870],"start":"2026-02-27T13:27:12.262Z"}];
 </script>
 <script>
 gsap.registerPlugin(ScrollTrigger);
@@ -532,8 +789,8 @@ window.addEventListener('scroll',()=>{
 
 // count-up
 const nums=[
-  {id:'s1',val:53},{id:'s2',val:132765},{id:'s3',val:435},
-  {id:'s4',val:0.94,dec:2},{id:'s5',val:680238}
+  {id:'s1',val:55},{id:'s2',val:142398},{id:'s3',val:460},
+  {id:'s4',val:1,dec:2},{id:'s5',val:752427}
 ];
 nums.forEach(({id,val,dec=0})=>{
   gsap.to(document.getElementById(id),{duration:1.8,ease:'power2.out',
@@ -566,6 +823,286 @@ document.querySelectorAll('.reveal').forEach(el=>{
   gsap.to(el,{opacity:1,y:0,duration:.6,ease:'power2.out',
     scrollTrigger:{trigger:el,start:'top 88%',once:true}});
 });
+
+// ── Achievement cards + popup ─────────────────────────────────────────────────
+if(document.getElementById('ach-section')){
+  const g=document.querySelector('#ach-section .ach-grid');
+  if(g) gsap.fromTo(g.querySelectorAll('.reveal'),
+    {opacity:0,y:28,scale:.97},
+    {opacity:1,y:0,scale:1,duration:.55,stagger:.09,ease:'back.out(1.4)',
+     scrollTrigger:{trigger:g,start:'top 85%',once:true}});
+
+  // Popup modal
+  const modal    = document.getElementById('ach-modal');
+  const backdrop = document.getElementById('ach-modal-backdrop');
+  const closeBtn = document.getElementById('ach-modal-close');
+  const TIER_ORDER = ['bronze','silver','gold','platinum'];
+  const TIER_EMOJI = {bronze:'🥉',silver:'🥈',gold:'🥇',platinum:'💎'};
+
+  function openModal(data){
+    document.getElementById('am-icon').textContent  = data.emoji;
+    document.getElementById('am-name').textContent  = data.name;
+    document.getElementById('am-baseline').textContent = data.baseline;
+    const statEl = document.getElementById('am-your-stat');
+    statEl.innerHTML = data.unlocked
+      ? "Your score: <strong>"+data.stat+"</strong>"
+      : "Not yet unlocked — here's what you need:";
+
+    const tiersEl = document.getElementById('am-tiers');
+    tiersEl.innerHTML = '';
+    (data.tiers || []).forEach(row => {
+      const reached  = data.rawValue >= row.min;
+      const isCurrent = data.unlocked && row.key === data.tiers
+        .slice().reverse().find(r => data.rawValue >= r.min)?.key;
+      const div = document.createElement('div');
+      div.className = 'am-tier-row'+(reached?' reached':'')+(isCurrent?' current':'');
+      div.style.setProperty('--row-color', row.color);
+      div.innerHTML =
+        '<span class="am-tier-emoji">'+TIER_EMOJI[row.key]+'</span>'+
+        '<span class="am-tier-label">'+row.label.toUpperCase()+'</span>'+
+        '<span class="am-tier-min">'+row.minLabel+'</span>'+
+        (reached ? '<span class="am-tier-check">✓</span>' : '');
+      tiersEl.appendChild(div);
+    });
+    modal.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+
+  function closeModal(){
+    modal.classList.remove('open');
+    document.body.style.overflow='';
+  }
+
+  document.querySelectorAll('.ach-card').forEach(card=>{
+    card.addEventListener('click',()=>{
+      try{ openModal(JSON.parse(card.dataset.ach)); }catch(e){}
+    });
+  });
+  backdrop.addEventListener('click', closeModal);
+  closeBtn.addEventListener('click',  closeModal);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+}
+
+// ── Share benchmark modal (always active — button lives in hero) ──────────────
+{
+  // ── Share benchmark modal ─────────────────────────────────────────────────
+  const BENCH = {"sessions":55,"spanDays":28,"msgsPerDay":5086,"totalResets":460,"totalLines":752427,"computeHrs":146.3,"spikeResets":63,"activeDayPct":79,"maxTurnMin":48.5,"uniqueTools":40,"uniqueExts":22,"filesEdited":1458,"apiErrors":3,"maxSessionMsgs":12423};
+
+  const shareModal    = document.getElementById('share-modal');
+  const shareBackdrop = document.getElementById('share-modal-backdrop');
+  const shareClose    = document.getElementById('share-modal-close');
+  const shareBtn      = document.getElementById('share-bench-btn');
+  const copyBtn       = document.getElementById('sm-copy-btn');
+  const discussBtn    = document.getElementById('sm-discuss-btn');
+  const heroCCardBtn  = document.getElementById('hero-card-btn');
+  const copiedLabel   = document.getElementById('sm-copied');
+  const codeBlock     = document.getElementById('sm-code-block');
+
+  const LABELS = {
+    sessions:       'Sessions',
+    spanDays:       'Span (days)',
+    msgsPerDay:     'Messages / day',
+    totalResets:    'Total context resets',
+    totalLines:     'Lines written',
+    computeHrs:     'AI compute hours',
+    spikeResets:    'Max resets in one session',
+    activeDayPct:   'Active day %',
+    maxTurnMin:     'Longest turn (min)',
+    uniqueTools:    'Unique tools used',
+    uniqueExts:     'Unique file extensions',
+    filesEdited:    'Unique files edited',
+    apiErrors:      'API errors',
+    maxSessionMsgs: 'Max msgs in one session',
+  };
+
+  function benchMarkdown(){
+    const NL='\n';
+    const rows = Object.entries(BENCH).map(([k,v])=>
+      '| '+(LABELS[k]||k).padEnd(28)+' | '+String(v).padStart(8)+' |'
+    ).join(NL);
+    return '## claude-wrapped benchmark submission'+NL+NL+
+      '| Metric                       |    Value |'+NL+
+      '|------------------------------|----------|'+NL+
+      rows+NL+NL+
+      '*Generated by [claude-wrapped](https://github.com/ElementalInsights/claude-wrapped) — anonymous aggregate counts only.*';
+  }
+
+  function openShareModal(){
+    codeBlock.textContent = benchMarkdown();
+    shareModal.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeShareModal(){
+    shareModal.classList.remove('open');
+    document.body.style.overflow='';
+  }
+
+  shareBtn.addEventListener('click', openShareModal);
+  shareBackdrop.addEventListener('click', closeShareModal);
+  shareClose.addEventListener('click', closeShareModal);
+
+  copyBtn.addEventListener('click', ()=>{
+    navigator.clipboard.writeText(benchMarkdown()).then(()=>{
+      copiedLabel.style.opacity='1';
+      setTimeout(()=>{ copiedLabel.style.opacity='0'; }, 2000);
+    });
+  });
+
+  discussBtn.addEventListener('click', ()=>{
+    window.open('https://github.com/ElementalInsights/claude-wrapped/discussions', '_blank');
+  });
+
+  // ── Share card (Canvas) ───────────────────────────────────────────────────
+  const UNLOCKED = [{"name":"The Conversationalist","emoji":"💬","tierLabel":"Platinum","tierColor":"#b9f2ff"},{"name":"Ghost Writer","emoji":"✍️","tierLabel":"Platinum","tierColor":"#b9f2ff"},{"name":"The Polyglot","emoji":"🌐","tierLabel":"Platinum","tierColor":"#b9f2ff"},{"name":"Session Marathon","emoji":"🏃","tierLabel":"Platinum","tierColor":"#b9f2ff"},{"name":"Tool Junkie","emoji":"🔧","tierLabel":"Platinum","tierColor":"#b9f2ff"},{"name":"The Editor","emoji":"📝","tierLabel":"Platinum","tierColor":"#b9f2ff"},{"name":"The Siege","emoji":"🔥","tierLabel":"Gold","tierColor":"#ffd700"},{"name":"Daily Driver","emoji":"📅","tierLabel":"Gold","tierColor":"#ffd700"},{"name":"Deep Thinker","emoji":"⏱️","tierLabel":"Gold","tierColor":"#ffd700"},{"name":"Goldfish Mode","emoji":"🧠","tierLabel":"Silver","tierColor":"#9ea0a5"},{"name":"The Grind","emoji":"⚙️","tierLabel":"Silver","tierColor":"#9ea0a5"}];
+  const CARD_STATS = {
+    sessions:   55,
+    resets:     460,
+    lines:      752427,
+    computeHrs: 146.3,
+    spanDays:   28,
+  };
+  const CARD_PROJECT = "My Project";
+  const CARD_RANGE   = "2026-01-30 → 2026-02-27";
+
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+  }
+
+  function drawShareCard(){
+    const W=800, H=440, DPR=2;
+    const canvas=document.createElement('canvas');
+    canvas.width=W*DPR; canvas.height=H*DPR;
+    canvas.style.width=W+'px'; canvas.style.height=H+'px';
+    const ctx=canvas.getContext('2d');
+    ctx.scale(DPR,DPR);
+
+    const PAD=44;
+
+    // Background
+    ctx.fillStyle='#080b18'; ctx.fillRect(0,0,W,H);
+
+    // Subtle inner glow at top
+    const glow=ctx.createRadialGradient(W/2,0,0,W/2,0,W*0.7);
+    glow.addColorStop(0,'rgba(74,222,128,0.07)');
+    glow.addColorStop(1,'rgba(74,222,128,0)');
+    ctx.fillStyle=glow; ctx.fillRect(0,0,W,H);
+
+    // Gradient accent bar (thicker — 4px)
+    const bar=ctx.createLinearGradient(0,0,W,0);
+    bar.addColorStop(0,'#4ade80'); bar.addColorStop(1,'#22d3ee');
+    ctx.fillStyle=bar; ctx.fillRect(0,0,W,4);
+
+    // ── Header ──────────────────────────────────────────────────────────────
+    // Eyebrow
+    ctx.fillStyle='#4ade80';
+    ctx.font='600 12px ui-monospace,monospace';
+    ctx.fillText('CLAUDE WRAPPED', PAD, 38);
+
+    // Project name — truncate if too long
+    ctx.fillStyle='#f1f5f9';
+    ctx.font='700 30px ui-sans-serif,system-ui,sans-serif';
+    let proj=CARD_PROJECT;
+    while(ctx.measureText(proj).width > W-PAD*2-10 && proj.length>4)
+      proj=proj.slice(0,-1);
+    if(proj!==CARD_PROJECT) proj=proj.trimEnd()+'…';
+    ctx.fillText(proj, PAD, 78);
+
+    // Date range
+    if(CARD_RANGE){
+      ctx.fillStyle='#4b5563';
+      ctx.font='500 13px ui-monospace,monospace';
+      ctx.fillText(CARD_RANGE, PAD, 100);
+    }
+
+    // ── Stats row ────────────────────────────────────────────────────────────
+    const statY=150;
+    const items=[
+      ['Sessions',  CARD_STATS.sessions.toLocaleString()],
+      ['Messages',  (CARD_STATS.sessions>0?(Math.round(CARD_STATS.sessions)).toLocaleString():'-')],
+      ['Resets',    CARD_STATS.resets.toLocaleString()],
+      ['Lines',     CARD_STATS.lines>=1000?(CARD_STATS.lines/1000).toFixed(0)+'k':CARD_STATS.lines.toString()],
+      ['Compute',   CARD_STATS.computeHrs.toFixed(0)+'h'],
+    ];
+    const colW=(W-PAD*2)/items.length;
+    items.forEach(([lbl,val],i)=>{
+      const cx=PAD+i*colW+colW/2;
+      ctx.textAlign='center';
+      ctx.fillStyle='#f1f5f9';
+      ctx.font='700 28px ui-sans-serif,system-ui,sans-serif';
+      ctx.fillText(val, cx, statY);
+      ctx.fillStyle='#4b5563';
+      ctx.font='600 10px ui-monospace,monospace';
+      ctx.fillText(lbl.toUpperCase(), cx, statY+20);
+    });
+    ctx.textAlign='left';
+
+    // ── Divider ──────────────────────────────────────────────────────────────
+    const divY=192;
+    ctx.strokeStyle='#1a1f35'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(PAD,divY); ctx.lineTo(W-PAD,divY); ctx.stroke();
+
+    // ── Achievements ─────────────────────────────────────────────────────────
+    ctx.fillStyle='#374151';
+    ctx.font='600 10px ui-monospace,monospace';
+    ctx.fillText('ACHIEVEMENTS  '+UNLOCKED.length+' UNLOCKED', PAD, 217);
+
+    // Pills — max 2 rows, overflow gracefully
+    ctx.font='600 12px ui-sans-serif,system-ui,sans-serif';
+    let px=PAD, py=262, rows=0;
+    const PH=26, PGAP=7, ROWH=36;
+    for(const a of UNLOCKED){
+      const lbl=a.emoji+' '+a.name;
+      const tw=ctx.measureText(lbl).width;
+      const pw=tw+20;
+      if(px+pw>W-PAD){
+        if(++rows>=2) break;
+        px=PAD; py+=ROWH;
+      }
+      // pill background
+      ctx.fillStyle=a.tierColor+'22';
+      ctx.strokeStyle=a.tierColor+'77'; ctx.lineWidth=1;
+      roundRect(ctx,px,py-PH+4,pw,PH,5); ctx.fill(); ctx.stroke();
+      // pill text
+      ctx.fillStyle=a.tierColor;
+      ctx.fillText(lbl, px+10, py-3);
+      px+=pw+PGAP;
+    }
+
+    // ── Footer ────────────────────────────────────────────────────────────────
+    const FY=H-36;
+    ctx.fillStyle='#0a0d1c'; ctx.fillRect(0,FY,W,H-FY);
+    ctx.strokeStyle='#1a1f35'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,FY); ctx.lineTo(W,FY); ctx.stroke();
+
+    ctx.fillStyle='#374151';
+    ctx.font='500 11px ui-monospace,monospace';
+    ctx.fillText('github.com/ElementalInsights/claude-wrapped', PAD, H-14);
+
+    const tag='claude-wrapped';
+    ctx.font='700 11px ui-monospace,monospace';
+    const tagW=ctx.measureText(tag).width;
+    const grad2=ctx.createLinearGradient(W-PAD-tagW,0,W-PAD,0);
+    grad2.addColorStop(0,'#4ade80'); grad2.addColorStop(1,'#22d3ee');
+    ctx.fillStyle=grad2;
+    ctx.fillText(tag, W-PAD-tagW, H-14);
+
+    return canvas;
+  }
+
+  heroCCardBtn.addEventListener('click',()=>{
+    const a=document.createElement('a');
+    a.download='claude-wrapped.png';
+    a.href=drawShareCard().toDataURL('image/png');
+    a.click();
+  });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeShareModal(); });
+}
 
 // ── Project bars ─────────────────────────────────────────────────────────────
 if(document.getElementById('proj-section')){
