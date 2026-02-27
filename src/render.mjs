@@ -26,6 +26,26 @@ export function render(stats, comparisons, config, achievements = []) {
   const maxProjMsgs   = projects.length ? Math.max(...projects.map(p => p.messages), 1) : 1;
   const projColors    = ['var(--green)','var(--cyan)','var(--yellow)','var(--purple)','var(--pink)','#34d399','#f97316','#60a5fa'];
 
+  // ── Benchmark share data (anonymous counts only) ─────────────────────────
+  const _activeDates = new Set(slim.filter(s => s.start).map(s => s.start.split('T')[0]));
+  const _activeDayPct = spanDays > 0 ? Math.round(_activeDates.size / spanDays * 100) : 0;
+  const benchStats = {
+    sessions:       sessionCount,
+    spanDays,
+    msgsPerDay:     Math.round(msgsPerDay),
+    totalResets:    totalCompacts,
+    totalLines,
+    computeHrs:     +((stats.totalComputeMs || 0) / 3600000).toFixed(1),
+    spikeResets:    spikeSession?.compacts || 0,
+    activeDayPct:   _activeDayPct,
+    maxTurnMin:     +((maxTurnMs || 0) / 60000).toFixed(1),
+    uniqueTools:    stats.uniqueToolCount    || 0,
+    uniqueExts:     stats.uniqueExtensions   || 0,
+    filesEdited:    stats.totalFilesEdited   || 0,
+    apiErrors:      stats.totalApiErrors     || 0,
+    maxSessionMsgs: stats.maxSessionMsgs     || 0,
+  };
+
   const peakHourFlavor =
       (peakHour >= 22 || peakHour <= 4)  ? { tag: 'Night Owl',       emoji: '🦉', desc: 'You ship code when everyone else is asleep.' }
     : peakHour <= 8                       ? { tag: 'Early Bird',      emoji: '🌅', desc: 'First up, first to ship.' }
@@ -312,6 +332,30 @@ footer a:hover{color:var(--text)}
 .ach-flavor{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:8px}
 .ach-baseline{font-size:11px;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace}
 .ach-note{font-size:12px;color:var(--dim);margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+.ach-section-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+.ach-section-header .section-title{margin-bottom:0}
+.ach-section-header .section-desc{margin-bottom:0}
+.ach-header-text{flex:1}
+.share-bench-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
+.share-bench-btn:hover{border-color:var(--green);color:var(--green);background:rgba(74,222,128,.06)}
+/* Share benchmark modal */
+#share-modal{position:fixed;inset:0;z-index:1001;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
+#share-modal.open{opacity:1;pointer-events:all}
+#share-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
+#share-modal-box{position:relative;background:#13162a;border:1px solid var(--border);border-radius:16px;padding:32px;width:min(540px,92vw);z-index:1;transform:scale(.93) translateY(12px);transition:transform .25s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto}
+#share-modal.open #share-modal-box{transform:scale(1) translateY(0)}
+#share-modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
+#share-modal-close:hover{color:var(--text);background:var(--surface)}
+.sm-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
+.sm-subtitle{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+.sm-code{background:#0c0e1a;border:1px solid var(--border);border-radius:8px;padding:16px;font-family:'SF Mono','Cascadia Code',monospace;font-size:12px;color:#94a3b8;line-height:1.7;white-space:pre;overflow-x:auto;margin-bottom:16px}
+.sm-actions{display:flex;gap:10px;flex-wrap:wrap}
+.sm-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+.sm-btn-copy{background:var(--green);color:#0a0d1a}
+.sm-btn-copy:hover{background:#86efac}
+.sm-btn-discuss{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.sm-btn-discuss:hover{border-color:var(--cyan);color:var(--cyan)}
+.sm-copied{font-size:12px;color:var(--green);margin-left:4px;opacity:0;transition:opacity .3s}
 /* Achievement popup modal */
 #ach-modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 #ach-modal.open{opacity:1;pointer-events:all}
@@ -493,6 +537,22 @@ ${projects.length > 1 ? `
 </section>
 
 ${achievements.length > 0 ? `
+<!-- Share benchmark modal -->
+<div id="share-modal">
+  <div id="share-modal-backdrop"></div>
+  <div id="share-modal-box">
+    <button id="share-modal-close" aria-label="Close">✕</button>
+    <div class="sm-title">📊 Share your benchmark data</div>
+    <div class="sm-subtitle">Help calibrate the community thresholds — everything here is anonymous aggregate counts only. No code, no filenames, no conversation content.</div>
+    <div class="sm-code" id="sm-code-block"></div>
+    <div class="sm-actions">
+      <button class="sm-btn sm-btn-copy" id="sm-copy-btn">📋 Copy to clipboard</button>
+      <button class="sm-btn sm-btn-discuss" id="sm-discuss-btn">💬 Open GitHub Discussion →</button>
+      <span class="sm-copied" id="sm-copied">Copied!</span>
+    </div>
+  </div>
+</div>
+
 <!-- Achievement popup modal -->
 <div id="ach-modal">
   <div id="ach-modal-backdrop"></div>
@@ -509,8 +569,13 @@ ${achievements.length > 0 ? `
 <section class="section" id="ach-section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container-wide">
     <div class="section-eyebrow">Achievements</div>
-    <div class="section-title">${achievements.filter(a => a.unlocked).length} / ${achievements.length} unlocked</div>
-    <div class="section-desc">Stacked against estimated 2026 community baselines. Click any card to see the tier breakdown.</div>
+    <div class="ach-section-header">
+      <div class="ach-header-text">
+        <div class="section-title">${achievements.filter(a => a.unlocked).length} / ${achievements.length} unlocked</div>
+        <div class="section-desc">Stacked against estimated 2026 community baselines. Click any card to see the tier breakdown.</div>
+      </div>
+      <button class="share-bench-btn" id="share-bench-btn">📊 Share benchmark data</button>
+    </div>
     <div class="ach-grid">
       ${achievements.map(a => `
       <div class="ach-card reveal${a.unlocked ? '' : ' locked'}"
@@ -746,7 +811,189 @@ if(document.getElementById('ach-section')){
   });
   backdrop.addEventListener('click', closeModal);
   closeBtn.addEventListener('click',  closeModal);
-  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeModal(); closeShareModal(); } });
+
+  // ── Share benchmark modal ─────────────────────────────────────────────────
+  const BENCH = ${JSON.stringify(benchStats)};
+
+  const shareModal    = document.getElementById('share-modal');
+  const shareBackdrop = document.getElementById('share-modal-backdrop');
+  const shareClose    = document.getElementById('share-modal-close');
+  const shareBtn      = document.getElementById('share-bench-btn');
+  const copyBtn       = document.getElementById('sm-copy-btn');
+  const discussBtn    = document.getElementById('sm-discuss-btn');
+  const copiedLabel   = document.getElementById('sm-copied');
+  const codeBlock     = document.getElementById('sm-code-block');
+
+  const LABELS = {
+    sessions:       'Sessions',
+    spanDays:       'Span (days)',
+    msgsPerDay:     'Messages / day',
+    totalResets:    'Total context resets',
+    totalLines:     'Lines written',
+    computeHrs:     'AI compute hours',
+    spikeResets:    'Max resets in one session',
+    activeDayPct:   'Active day %',
+    maxTurnMin:     'Longest turn (min)',
+    uniqueTools:    'Unique tools used',
+    uniqueExts:     'Unique file extensions',
+    filesEdited:    'Unique files edited',
+    apiErrors:      'API errors',
+    maxSessionMsgs: 'Max msgs in one session',
+  };
+
+  function benchMarkdown(){
+    const rows = Object.entries(BENCH).map(([k,v])=>
+      '| '+(LABELS[k]||k).padEnd(28)+' | '+String(v).padStart(8)+' |'
+    ).join('\n');
+    return '## claude-wrapped benchmark submission\n\n'+
+      '| Metric                       |    Value |\n'+
+      '|------------------------------|----------|\n'+
+      rows+'\n\n'+
+      '*Generated by [claude-wrapped](https://github.com/ElementalInsights/claude-wrapped) \u2014 anonymous aggregate counts only.*';
+  }
+
+  function openShareModal(){
+    codeBlock.textContent = benchMarkdown();
+    shareModal.classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeShareModal(){
+    shareModal.classList.remove('open');
+    document.body.style.overflow='';
+  }
+
+  shareBtn.addEventListener('click', openShareModal);
+  shareBackdrop.addEventListener('click', closeShareModal);
+  shareClose.addEventListener('click', closeShareModal);
+
+  copyBtn.addEventListener('click', ()=>{
+    navigator.clipboard.writeText(benchMarkdown()).then(()=>{
+      copiedLabel.style.opacity='1';
+      setTimeout(()=>{ copiedLabel.style.opacity='0'; }, 2000);
+    });
+  });
+
+  discussBtn.addEventListener('click', ()=>{
+    window.open('https://github.com/ElementalInsights/claude-wrapped/discussions', '_blank');
+  });
+
+  // ── Share card (Canvas) ───────────────────────────────────────────────────
+  const UNLOCKED = ${JSON.stringify(achievements.filter(a => a.unlocked).map(a => ({ name: a.name, emoji: a.emoji, tierLabel: a.tierLabel, tierColor: a.tierColor })))};
+  const CARD_STATS = {
+    sessions:   ${sessionCount},
+    resets:     ${totalCompacts},
+    lines:      ${totalLines},
+    computeHrs: ${+((stats.totalComputeMs||0)/3600000).toFixed(1)},
+    spanDays:   ${spanDays},
+  };
+  const CARD_PROJECT = ${JSON.stringify(projectName)};
+  const CARD_RANGE   = ${JSON.stringify(dateRange)};
+
+  function roundRect(ctx,x,y,w,h,r){
+    ctx.beginPath();
+    ctx.moveTo(x+r,y);
+    ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+    ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+    ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+    ctx.closePath();
+  }
+
+  function drawShareCard(){
+    const W=800, H=420;
+    const canvas=document.createElement('canvas');
+    canvas.width=W; canvas.height=H;
+    const ctx=canvas.getContext('2d');
+
+    // Background
+    ctx.fillStyle='#0a0d1a'; ctx.fillRect(0,0,W,H);
+
+    // Green-to-cyan accent bar at top
+    const grad=ctx.createLinearGradient(0,0,W,0);
+    grad.addColorStop(0,'#4ade80'); grad.addColorStop(1,'#22d3ee');
+    ctx.fillStyle=grad; ctx.fillRect(0,0,W,3);
+
+    // Eyebrow
+    ctx.fillStyle='#4ade80'; ctx.font='bold 12px monospace';
+    ctx.fillText('claude-wrapped', 40, 42);
+
+    // Project name
+    ctx.fillStyle='#f8fafc'; ctx.font='bold 28px system-ui,sans-serif';
+    ctx.fillText(CARD_PROJECT, 40, 80);
+
+    // Date range
+    if(CARD_RANGE){
+      ctx.fillStyle='#475569'; ctx.font='12px monospace';
+      ctx.fillText(CARD_RANGE, 40, 104);
+    }
+
+    // Stat pills row
+    const items=[
+      ['Sessions',  CARD_STATS.sessions.toLocaleString()],
+      ['Resets',    CARD_STATS.resets.toLocaleString()],
+      ['Lines',     (CARD_STATS.lines/1000).toFixed(0)+'k'],
+      ['Compute',   CARD_STATS.computeHrs.toFixed(0)+'h'],
+      ['Days',      CARD_STATS.spanDays.toString()],
+    ];
+    const sw=(W-80)/items.length;
+    items.forEach(([lbl,val],i)=>{
+      const x=40+i*sw;
+      ctx.fillStyle='#f8fafc'; ctx.font='bold 26px system-ui,sans-serif';
+      ctx.fillText(val, x, 162);
+      ctx.fillStyle='#64748b'; ctx.font='11px monospace';
+      ctx.fillText(lbl.toUpperCase(), x, 180);
+    });
+
+    // Divider
+    ctx.strokeStyle='#1e2235'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(40,198); ctx.lineTo(W-40,198); ctx.stroke();
+
+    // Achievements label
+    ctx.fillStyle='#64748b'; ctx.font='bold 10px monospace';
+    ctx.fillText('ACHIEVEMENTS UNLOCKED', 40, 224);
+
+    // Achievement pills
+    let px=40, py=250;
+    UNLOCKED.forEach(a=>{
+      const lbl=a.emoji+' '+a.name;
+      ctx.font='bold 12px system-ui,sans-serif';
+      const tw=ctx.measureText(lbl).width;
+      const pw=tw+24, ph=26;
+      if(px+pw>W-40){ px=40; py+=38; }
+      ctx.fillStyle=a.tierColor+'28';
+      ctx.strokeStyle=a.tierColor+'88'; ctx.lineWidth=1;
+      roundRect(ctx,px,py-18,pw,ph,5); ctx.fill(); ctx.stroke();
+      ctx.fillStyle=a.tierColor;
+      ctx.fillText(lbl, px+12, py-1);
+      px+=pw+8;
+    });
+
+    // Footer bar
+    ctx.fillStyle='#0d0f1e'; ctx.fillRect(0,H-40,W,40);
+    ctx.fillStyle='#334155'; ctx.font='11px monospace';
+    ctx.fillText('github.com/ElementalInsights/claude-wrapped', 40, H-14);
+    const tag='claude-wrapped';
+    const tagW=ctx.measureText(tag).width;
+    const grad2=ctx.createLinearGradient(W-40-tagW,0,W-40,0);
+    grad2.addColorStop(0,'#4ade80'); grad2.addColorStop(1,'#22d3ee');
+    ctx.fillStyle=grad2; ctx.font='bold 11px monospace';
+    ctx.fillText(tag, W-40-tagW, H-14);
+
+    return canvas;
+  }
+
+  // Inject "Download share card" button into share modal actions
+  const cardBtn=document.createElement('button');
+  cardBtn.className='sm-btn sm-btn-discuss';
+  cardBtn.innerHTML='🖼️ Download share card';
+  cardBtn.addEventListener('click',()=>{
+    const a=document.createElement('a');
+    a.download='claude-wrapped.png';
+    a.href=drawShareCard().toDataURL('image/png');
+    a.click();
+  });
+  document.querySelector('.sm-actions').appendChild(cardBtn);
 }
 
 // ── Project bars ─────────────────────────────────────────────────────────────
