@@ -980,7 +980,7 @@ if(document.getElementById('ach-section')){
 
     // Pills — max 2 rows, overflow gracefully
     ctx.font='600 12px ui-sans-serif,system-ui,sans-serif';
-    let px=PAD, py=242, rows=0;
+    let px=PAD, py=262, rows=0;
     const PH=26, PGAP=7, ROWH=36;
     for(const a of UNLOCKED){
       const lbl=a.emoji+' '+a.name;
