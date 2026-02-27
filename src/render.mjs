@@ -1,5 +1,5 @@
 // render.mjs — generate self-contained index.html
-export function render(stats, comparisons, config) {
+export function render(stats, comparisons, config, achievements = []) {
   const { sessionCount, totalMessages, totalCompacts, totalGB, totalLines,
           msgsPerDay, compactsPerDay, mbPerDay, computeHrsDay,
           avgTurnMs, maxTurnMs, spanDays, firstDay, lastDay,
@@ -80,10 +80,14 @@ export function render(stats, comparisons, config) {
       });
       cur.setUTCDate(cur.getUTCDate() + 1);
     }
-    // Pad final week
+    // Pad final week to 7 days
     while (weeks[weeks.length - 1].length < 7) {
       weeks[weeks.length - 1].push({ date: '', msgs: 0, inRange: false });
     }
+
+    // Always show at least 26 weeks so the calendar fills the container width
+    const EMPTY_WEEK = Array(7).fill({ date: '', msgs: 0, inRange: false });
+    while (weeks.length < 26) weeks.push([...EMPTY_WEEK]);
 
     return { weeks, months, maxVal };
   }
@@ -93,8 +97,8 @@ export function render(stats, comparisons, config) {
   // Build calendar SVG string
   function calSvg() {
     if (!cal) return '';
-    const CS = 11, CG = 3, STEP = CS + CG;
-    const LEFT = 14, TOP = 18;
+    const CS = 13, CG = 3, STEP = CS + CG;
+    const LEFT = 16, TOP = 20;
     const W = LEFT + cal.weeks.length * STEP;
     const H = TOP + 7 * STEP;
 
@@ -106,7 +110,8 @@ export function render(stats, comparisons, config) {
       return '#39d353';
     }
 
-    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;display:block;overflow:visible" xmlns="http://www.w3.org/2000/svg">`;
+    // Always fill container — SVG scales proportionally via viewBox
+    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block;overflow:visible" xmlns="http://www.w3.org/2000/svg">`;
 
     // Month labels
     for (const { label, weekIdx } of cal.months) {
@@ -281,6 +286,19 @@ footer{border-top:1px solid var(--border);padding:28px 40px;display:flex;justify
 footer a{color:var(--dim);text-decoration:none}
 footer a:hover{color:var(--text)}
 
+/* ACHIEVEMENTS */
+.ach-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.ach-card{background:var(--surface);border:1px solid var(--tier-color,var(--border));border-radius:12px;padding:24px;box-shadow:0 0 24px var(--tier-glow,transparent);position:relative;overflow:hidden}
+.ach-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--tier-color,var(--green))}
+.ach-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.ach-icon{font-size:28px}
+.ach-tier{font-size:10px;font-weight:700;letter-spacing:.15em;color:var(--tier-color);font-family:'SF Mono','Cascadia Code',monospace;padding:3px 8px;border:1px solid var(--tier-color);border-radius:4px;opacity:.85}
+.ach-name{font-size:17px;font-weight:700;color:var(--text);margin-bottom:6px}
+.ach-stat{font-size:22px;font-weight:700;font-family:'SF Mono','Cascadia Code',monospace;color:var(--tier-color);margin-bottom:10px}
+.ach-flavor{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.ach-baseline{font-size:11px;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace}
+.ach-note{font-size:12px;color:var(--dim);margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
+
 /* TOOLTIP */
 #tip{position:fixed;pointer-events:none;background:#1a1d2e;border:1px solid var(--border);border-radius:8px;padding:10px 14px;font-size:13px;color:var(--muted);z-index:999;opacity:0;transition:opacity .15s;min-width:160px}
 .tn{font-weight:600;color:var(--text);margin-bottom:4px;font-family:'SF Mono','Cascadia Code',monospace;font-size:12px}
@@ -439,6 +457,29 @@ ${projects.length > 1 ? `
   </div>
 </section>
 
+${achievements.length > 0 ? `
+<section class="section" id="ach-section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
+  <div class="container-wide">
+    <div class="section-eyebrow">Achievements</div>
+    <div class="section-title">${achievements.length} unlocked</div>
+    <div class="section-desc">Stacked against estimated 2026 community baselines for active Claude Code users.</div>
+    <div class="ach-grid">
+      ${achievements.map(a => `
+      <div class="ach-card reveal" style="--tier-color:${a.tierColor};--tier-glow:${a.tierGlow}">
+        <div class="ach-header">
+          <div class="ach-icon">${a.emoji}</div>
+          <div class="ach-tier">${a.tierLabel.toUpperCase()}</div>
+        </div>
+        <div class="ach-name">${a.name}</div>
+        <div class="ach-stat">${a.stat}</div>
+        <div class="ach-flavor">${a.flavor}</div>
+        <div class="ach-baseline">${a.baseline}</div>
+      </div>`).join('')}
+    </div>
+    <div class="ach-note">Baselines are estimates — not official Anthropic data. As community benchmarks improve, thresholds will update.</div>
+  </div>
+</section>` : ''}
+
 ${messagesByHour.some(v => v > 0) ? `
 <section class="section" id="work-section" style="padding-top:0;border-top:1px solid var(--border)">
   <div class="container-wide">
@@ -596,6 +637,15 @@ document.querySelectorAll('.reveal').forEach(el=>{
   gsap.to(el,{opacity:1,y:0,duration:.6,ease:'power2.out',
     scrollTrigger:{trigger:el,start:'top 88%',once:true}});
 });
+
+// ── Achievement cards ────────────────────────────────────────────────────────
+if(document.getElementById('ach-section')){
+  const g=document.querySelector('#ach-section .ach-grid');
+  if(g) gsap.fromTo(g.querySelectorAll('.reveal'),
+    {opacity:0,y:28,scale:.97},
+    {opacity:1,y:0,scale:1,duration:.55,stagger:.09,ease:'back.out(1.4)',
+     scrollTrigger:{trigger:g,start:'top 85%',once:true}});
+}
 
 // ── Project bars ─────────────────────────────────────────────────────────────
 if(document.getElementById('proj-section')){

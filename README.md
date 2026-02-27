@@ -22,23 +22,34 @@ No server. No account. No dependencies. One command.
 │    6 cards: compute hours, messages, resets/day,        │
 │    MB/day, longest turn, avg turn                       │
 │                                                         │
+│  ✦ By Project (multi-project only)                      │
+│    Horizontal bar per project: sessions, resets,        │
+│    lines written, compute hours                         │
+│                                                         │
 │  ✦ Session Timeline (interactive)                       │
 │    Every session = one bar, segments = context resets   │
-│    Auto-plays, scrubable                                │
+│    Bars reveal as playhead sweeps · Scrubable           │
 │                                                         │
 │  ✦ Put in Perspective                                   │
 │    Lines written = X War & Peace novels                 │
 │    Resets > number of countries in the world            │
 │    (5 comparison cards, thresholds fully editable)      │
 │                                                         │
+│  ✦ Achievements (Steam-style)                           │
+│    Bronze / Silver / Gold / Platinum tiers              │
+│    Compared to estimated 2026 community baselines       │
+│    7 unlockable achievements across key metrics         │
+│                                                         │
+│  ✦ Coding Rhythm                                        │
+│    GitHub-style activity calendar                       │
+│    Hour-of-day heatmap · Day-of-week bars               │
+│    Night Owl / Early Bird / Evening Coder badge         │
+│                                                         │
 │  ✦ Tool Call Breakdown                                  │
 │    Top tool calls by count                              │
 │                                                         │
-│  ✦ Most Edited Files                                    │
+│  ✦ Most Edited Files (anonymised by default)            │
 │    Files you kept coming back to                        │
-│                                                         │
-│  ✦ Spike Session                                        │
-│    Your hardest session — longest, most resets          │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -105,6 +116,24 @@ Drop a `claude-wrapped.config.json` anywhere and run `node bin/cli.mjs`:
 ```
 
 For multi-project via config, use `--pick` flags on the CLI (repeatable flags aren't in the config file yet).
+
+---
+
+## Achievements
+
+Seven Steam-style achievements unlock automatically when your stats clear community benchmarks.
+
+| Achievement | What unlocks it | Tiers |
+|-------------|-----------------|-------|
+| The Conversationalist | Messages per day | 75 / 160 / 400 / 800 |
+| Goldfish Mode | Total context resets | 50 / 200 / 500 / 1,000 |
+| Ghost Writer | Total lines written | 10k / 50k / 100k / 500k |
+| The Grind | Total AI compute hours | 20h / 75h / 150h / 500h |
+| The Siege | Resets in one session | 10 / 20 / 40 / 75 |
+| Daily Driver | Active days ratio | 40% / 55% / 70% / 86% |
+| Deep Thinker | Longest single AI turn | 5 / 15 / 30 / 60 min |
+
+Baselines are estimates from public developer AI usage data (2026). They'll improve as better benchmarks emerge.
 
 ---
 

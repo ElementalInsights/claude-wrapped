@@ -6,6 +6,7 @@ import { homedir } from 'os';
 import { loadProject } from '../src/extract.mjs';
 import { analyze } from '../src/analyze.mjs';
 import { getComparisons } from '../src/comparisons.mjs';
+import { getAchievements } from '../src/benchmarks.mjs';
 import { render } from '../src/render.mjs';
 
 const args = process.argv.slice(2);
@@ -163,8 +164,11 @@ if (!redact) console.log(`  ⚠  --no-redact: file names and project names will 
 const stats       = analyze(allSessions, { projectSessions, redact });
 const comparisons = getComparisons(stats);
 
+const achievements = getAchievements(stats);
+console.log(`  ${achievements.length} achievement${achievements.length !== 1 ? 's' : ''} unlocked`);
+
 console.log(`  Rendering...`);
-const html = render(stats, comparisons, config);
+const html = render(stats, comparisons, config, achievements);
 
 // Write output
 mkdirSync(outDir, { recursive: true });

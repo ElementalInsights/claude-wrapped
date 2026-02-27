@@ -7,12 +7,13 @@
 ## File map
 
 ```
-bin/cli.mjs          Entry point. Arg parsing, config loading, orchestration.
-src/extract.mjs      Reads .jsonl files → array of session objects.
-src/analyze.mjs      Session array → aggregate stats object.
-src/comparisons.mjs  Pure data: arrays of { min, label, emoji } thresholds.
-src/render.mjs       stats + config → self-contained HTML string (one big template literal).
-package.json         Zero runtime deps. "type": "module".
+bin/cli.mjs           Entry point. Arg parsing, config loading, orchestration.
+src/extract.mjs       Reads .jsonl files → array of session objects.
+src/analyze.mjs       Session array + options → aggregate stats object.
+src/comparisons.mjs   Pure data: arrays of { min, label, emoji } thresholds.
+src/benchmarks.mjs    Community baselines + Steam-style achievement logic.
+src/render.mjs        stats + comparisons + config + achievements → HTML string.
+package.json          Zero runtime deps. "type": "module".
 ```
 
 ---
@@ -113,10 +114,12 @@ package.json         Zero runtime deps. "type": "module".
 |------|---------|
 | New comparison threshold | `src/comparisons.mjs` only |
 | New comparison metric | `src/comparisons.mjs` + `src/analyze.mjs` + `src/render.mjs` |
+| New achievement | `src/benchmarks.mjs` — add a `push(tier(...), {...})` call in `getAchievements()` |
 | New template section | `src/render.mjs` (HTML + CSS + JS all inline) |
 | New stat or aggregate | `src/analyze.mjs` → add to returned stats object |
 | New CLI flag | `bin/cli.mjs` arg parser → pass through config |
 | Filter sessions (e.g. --since) | `bin/cli.mjs` (flag) + `src/extract.mjs` (apply filter) |
+| Update community baselines | `src/benchmarks.mjs` → edit `BASELINES` object at the top |
 
 ---
 
@@ -168,13 +171,14 @@ export const linesWrittenComparisons = [
 
 1. **Hero** — animated count-up stats row + comparison pill
 2. **Your Average Day** — 6 metric cards (compute hrs, messages, resets, MB, longest/avg turn)
-3. **By Project** — horizontal bar per project with 4 stats *(hidden when only 1 project)*
-4. **The Context Pulse** — SVG bar chart, one bar per session; bars reveal as playhead sweeps
+3. **By Project** — horizontal bars per project with 4 stats *(hidden when ≤1 project)*
+4. **The Context Pulse** — SVG bar chart; bars reveal via clipPath as playhead sweeps (default 2× speed)
 5. **Put in Perspective** — 5 comparison cards (lines → novels, resets → countries, etc.)
-6. **When You Work** — 24-cell hour heatmap + day-of-week bars *(hidden when no timestamp data)*
-7. **Top Tool Calls + Most Edited Files** — two-column list cards
-8. **Author card** *(hidden when `--author` not set)*
-9. **Footer**
+6. **Achievements** — Steam-style Bronze/Silver/Gold/Platinum cards vs community baselines *(hidden when none unlock)*
+7. **Coding Rhythm** — GitHub activity calendar + hour heatmap + day-of-week bars + personality badge *(hidden when no timestamp data)*
+8. **Top Tool Calls + Most Edited Files** — two-column list cards
+9. **Author card** *(hidden when `--author` not set)*
+10. **Footer**
 
 ---
 

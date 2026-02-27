@@ -12,7 +12,8 @@
 | `src/extract.mjs` | Reads `.jsonl` files from a directory, parses each line, returns an array of session objects. |
 | `src/analyze.mjs` | Takes session array + options, computes aggregate stats (counts, totals, averages, top lists, rhythms). |
 | `src/comparisons.mjs` | Arrays of `{ min, label, emoji }` thresholds for fun metric comparisons. Pure data, no logic. |
-| `src/render.mjs` | Single function that takes `stats` + `comparisons` + `config`, returns a self-contained HTML string. |
+| `src/benchmarks.mjs` | Community baselines (2026 estimates) + Steam-style achievement logic. `getAchievements(stats)` returns unlocked achievements sorted by tier. |
+| `src/render.mjs` | Single function: `render(stats, comparisons, config, achievements)` → self-contained HTML string. |
 | `package.json` | Package metadata. Zero runtime dependencies. `"type": "module"` for ESM. |
 
 ---
@@ -173,12 +174,13 @@ Do NOT split `render.mjs` into multiple files. The self-contained single-file ou
 1. **Hero** — animated count-up stats + comparison pill
 2. **Your Average Day** — 6 metric cards
 3. **By Project** — horizontal bars per project *(hidden when ≤1 project)*
-4. **The Context Pulse** — SVG bar chart (bars reveal via clipPath as playhead sweeps)
+4. **The Context Pulse** — SVG bar chart; bars reveal via clipPath as playhead sweeps, default 2× speed
 5. **Put in Perspective** — 5 comparison cards
-6. **When You Work** — 24-cell hour heatmap + day-of-week bars *(hidden when no timestamps)*
-7. **Top Tool Calls + Most Edited Files** — two-column list
-8. **Author card** *(hidden when `--author` not set)*
-9. **Footer**
+6. **Achievements** — Steam-style Bronze/Silver/Gold/Platinum cards vs community baselines *(hidden when none unlock)*
+7. **Coding Rhythm** — GitHub activity calendar + hour heatmap + day-of-week bars + personality badge *(hidden when no timestamps)*
+8. **Top Tool Calls + Most Edited Files** — two-column list
+9. **Author card** *(hidden when `--author` not set)*
+10. **Footer**
 
 ---
 
