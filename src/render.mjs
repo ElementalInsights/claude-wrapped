@@ -347,7 +347,7 @@ document.querySelectorAll('.reveal').forEach(el=>{
 function initPlayer(){
   const wrap=document.getElementById('pulse-wrap');
   const svg=document.getElementById('pulse-svg');
-  const W=wrap.clientWidth, PH=180;
+  const W=wrap.clientWidth, PH=300;
   svg.setAttribute('viewBox','0 0 '+W+' '+PH);
   svg.setAttribute('height',PH);
 

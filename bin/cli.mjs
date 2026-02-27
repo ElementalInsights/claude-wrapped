@@ -15,7 +15,35 @@ function arg(flag, def = null) {
   return i !== -1 ? args[i + 1] : def;
 }
 
+// Return all values for a repeatable flag e.g. --sessions a --sessions b → ['a','b']
+function argAll(flag) {
+  const vals = [];
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === flag && args[i + 1]) vals.push(args[i + 1]);
+  }
+  return vals;
+}
+
 function flag(f) { return args.includes(f); }
+
+// List available projects
+if (flag('--list')) {
+  const claudeProjects = join(homedir(), '.claude', 'projects');
+  try {
+    const { readdirSync, statSync } = await import('fs');
+    const entries = readdirSync(claudeProjects)
+      .filter(e => { try { return statSync(join(claudeProjects, e)).isDirectory(); } catch { return false; } });
+    console.log(`\n  Projects in ${claudeProjects}:\n`);
+    for (const e of entries) {
+      const files = existsSync(join(claudeProjects, e))
+        ? (await import('fs')).readdirSync(join(claudeProjects, e)).filter(f => f.endsWith('.jsonl')).length
+        : 0;
+      console.log(`    ${e}  (${files} sessions)`);
+    }
+    console.log(`\n  Use --pick <name> to include specific projects (repeatable)\n`);
+  } catch { console.error('  Could not read ~/.claude/projects'); }
+  process.exit(0);
+}
 
 if (flag('--help') || flag('-h')) {
   console.log(`
@@ -25,9 +53,12 @@ if (flag('--help') || flag('-h')) {
     claude-wrapped [options]
 
   Options:
-    --sessions <path>   Path to a Claude project directory containing .jsonl files
-                        Defaults to all projects in ~/.claude/projects/
-    --project <name>    Display name for your project  (default: folder name)
+    --sessions <path>   Path to a project dir with .jsonl files (repeatable)
+                        Defaults to ALL projects in ~/.claude/projects/
+    --pick    <name>    Pick a specific project by folder name (repeatable)
+                        e.g. --pick my-app --pick other-app
+    --list              List all available projects and exit
+    --project <name>    Display name  (default: folder name or "My Projects")
     --author  <name>    Your name (optional, shown in footer)
     --tagline <text>    Custom subtitle shown in hero
     --out     <dir>     Output directory  (default: ./wrapped)
@@ -35,9 +66,10 @@ if (flag('--help') || flag('-h')) {
     --help              Show this help
 
   Examples:
-    claude-wrapped
-    claude-wrapped --sessions ~/.claude/projects/my-app
-    claude-wrapped --project "My SaaS" --author "Jake Edwards" --out ./site
+    claude-wrapped --list
+    claude-wrapped --pick my-saas --project "My SaaS" --author "Jake"
+    claude-wrapped --sessions ~/code/project-a --sessions ~/code/project-b
+    claude-wrapped --sessions ~/.claude/projects/my-app --out ./site
   `);
   process.exit(0);
 }
@@ -65,12 +97,22 @@ const sessionsArg = arg('--sessions') || config.sessions;
 
 // Resolve sessions path(s)
 let sessionsDirs = [];
+const claudeProjects = join(homedir(), '.claude', 'projects');
 
-if (sessionsArg) {
+const multiSessions = argAll('--sessions');
+const picks         = argAll('--pick').concat(argAll('-p'));
+
+if (multiSessions.length > 0) {
+  // Explicit --sessions flags (repeatable)
+  sessionsDirs = multiSessions.map(p => resolve(p.replace('~', homedir())));
+} else if (picks.length > 0) {
+  // --pick by folder name
+  sessionsDirs = picks.map(name => join(claudeProjects, name));
+} else if (sessionsArg) {
+  // Single legacy --sessions value from config
   sessionsDirs = [resolve(sessionsArg.replace('~', homedir()))];
 } else {
-  // Auto-detect: all project dirs under ~/.claude/projects/
-  const claudeProjects = join(homedir(), '.claude', 'projects');
+  // Auto-detect all projects
   try {
     const { readdirSync, statSync } = await import('fs');
     const entries = readdirSync(claudeProjects);
@@ -79,7 +121,7 @@ if (sessionsArg) {
       .filter(p => { try { return statSync(p).isDirectory(); } catch { return false; } });
     console.log(`  Found ${sessionsDirs.length} project(s) in ${claudeProjects}`);
   } catch {
-    console.error(`  Could not find ~/.claude/projects — use --sessions <path>`);
+    console.error(`  Could not find ~/.claude/projects — use --sessions <path> or --pick <name>`);
     process.exit(1);
   }
 }

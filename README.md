@@ -47,9 +47,10 @@ No server. No account. No dependencies. One command.
 ## Quick start
 
 ```bash
-git clone https://github.com/you/claude-wrapped
+git clone https://github.com/ElementalInsights/claude-wrapped
 cd claude-wrapped
-node bin/cli.mjs
+node bin/cli.mjs --list          # see what projects you have
+node bin/cli.mjs                 # run against all of them
 ```
 
 Open `./wrapped/index.html`. Done.
@@ -58,34 +59,51 @@ Open `./wrapped/index.html`. Done.
 
 ## Options
 
-```bash
-node bin/cli.mjs [options]
-```
-
 | Flag | Description | Default |
 |------|-------------|---------|
-| `--sessions <path>` | Path to a Claude project dir (or parent of multiple) | `~/.claude/projects/` |
-| `--project <name>` | Display name shown in the header | Directory name |
+| `--list` | List all projects in `~/.claude/projects/` and exit | — |
+| `--pick <name>` | Pick a project by folder name — repeatable | — |
+| `--sessions <path>` | Explicit path to a project dir — repeatable | all projects |
+| `--project <name>` | Display name shown in the header | folder name |
 | `--author <name>` | Your name, shown in the footer | — |
-| `--tagline <text>` | Subtitle under the project name | — |
+| `--tagline <text>` | Subtitle under the project name | auto-generated |
 | `--out <dir>` | Output directory | `./wrapped` |
 | `--config <file>` | Load options from a JSON file | `claude-wrapped.config.json` |
 
+### Examples
+
+```bash
+# See what projects you have
+node bin/cli.mjs --list
+
+# One project
+node bin/cli.mjs --pick my-saas --project "My SaaS" --author "Jake Edwards"
+
+# Multiple projects merged into one page
+node bin/cli.mjs --pick project-a --pick project-b --project "Everything"
+
+# Explicit paths (repeatable)
+node bin/cli.mjs --sessions ~/.claude/projects/my-app --sessions ~/other/project
+
+# All projects, custom output dir
+node bin/cli.mjs --project "2025 Wrapped" --out ./site
+```
+
 ### Config file
 
-Drop a `claude-wrapped.config.json` in your project root:
+Drop a `claude-wrapped.config.json` anywhere and run `node bin/cli.mjs`:
 
 ```json
 {
   "sessions": "~/.claude/projects/my-project",
   "project": "My SaaS",
   "author": "Jane Smith",
-  "tagline": "What I built and how Claude helped",
+  "tagline": "Six months. One AI. Here's what actually happened.",
   "out": "./site"
 }
 ```
 
-Then just run `node bin/cli.mjs` — flags override config file values.
+For multi-project via config, use `--pick` flags on the CLI (repeatable flags aren't in the config file yet).
 
 ---
 
