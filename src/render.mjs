@@ -901,84 +901,122 @@ if(document.getElementById('ach-section')){
   }
 
   function drawShareCard(){
-    const W=800, H=420;
+    const W=800, H=440, DPR=2;
     const canvas=document.createElement('canvas');
-    canvas.width=W; canvas.height=H;
+    canvas.width=W*DPR; canvas.height=H*DPR;
+    canvas.style.width=W+'px'; canvas.style.height=H+'px';
     const ctx=canvas.getContext('2d');
+    ctx.scale(DPR,DPR);
+
+    const PAD=44;
 
     // Background
-    ctx.fillStyle='#0a0d1a'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#080b18'; ctx.fillRect(0,0,W,H);
 
-    // Green-to-cyan accent bar at top
-    const grad=ctx.createLinearGradient(0,0,W,0);
-    grad.addColorStop(0,'#4ade80'); grad.addColorStop(1,'#22d3ee');
-    ctx.fillStyle=grad; ctx.fillRect(0,0,W,3);
+    // Subtle inner glow at top
+    const glow=ctx.createRadialGradient(W/2,0,0,W/2,0,W*0.7);
+    glow.addColorStop(0,'rgba(74,222,128,0.07)');
+    glow.addColorStop(1,'rgba(74,222,128,0)');
+    ctx.fillStyle=glow; ctx.fillRect(0,0,W,H);
 
+    // Gradient accent bar (thicker — 4px)
+    const bar=ctx.createLinearGradient(0,0,W,0);
+    bar.addColorStop(0,'#4ade80'); bar.addColorStop(1,'#22d3ee');
+    ctx.fillStyle=bar; ctx.fillRect(0,0,W,4);
+
+    // ── Header ──────────────────────────────────────────────────────────────
     // Eyebrow
-    ctx.fillStyle='#4ade80'; ctx.font='bold 12px monospace';
-    ctx.fillText('claude-wrapped', 40, 42);
+    ctx.fillStyle='#4ade80';
+    ctx.font='600 12px ui-monospace,monospace';
+    ctx.fillText('CLAUDE WRAPPED', PAD, 38);
 
-    // Project name
-    ctx.fillStyle='#f8fafc'; ctx.font='bold 28px system-ui,sans-serif';
-    ctx.fillText(CARD_PROJECT, 40, 80);
+    // Project name — truncate if too long
+    ctx.fillStyle='#f1f5f9';
+    ctx.font='700 30px ui-sans-serif,system-ui,sans-serif';
+    let proj=CARD_PROJECT;
+    while(ctx.measureText(proj).width > W-PAD*2-10 && proj.length>4)
+      proj=proj.slice(0,-1);
+    if(proj!==CARD_PROJECT) proj=proj.trimEnd()+'…';
+    ctx.fillText(proj, PAD, 78);
 
     // Date range
     if(CARD_RANGE){
-      ctx.fillStyle='#475569'; ctx.font='12px monospace';
-      ctx.fillText(CARD_RANGE, 40, 104);
+      ctx.fillStyle='#4b5563';
+      ctx.font='500 13px ui-monospace,monospace';
+      ctx.fillText(CARD_RANGE, PAD, 100);
     }
 
-    // Stat pills row
+    // ── Stats row ────────────────────────────────────────────────────────────
+    const statY=150;
     const items=[
       ['Sessions',  CARD_STATS.sessions.toLocaleString()],
+      ['Messages',  (CARD_STATS.sessions>0?(Math.round(CARD_STATS.sessions)).toLocaleString():'-')],
       ['Resets',    CARD_STATS.resets.toLocaleString()],
-      ['Lines',     (CARD_STATS.lines/1000).toFixed(0)+'k'],
+      ['Lines',     CARD_STATS.lines>=1000?(CARD_STATS.lines/1000).toFixed(0)+'k':CARD_STATS.lines.toString()],
       ['Compute',   CARD_STATS.computeHrs.toFixed(0)+'h'],
-      ['Days',      CARD_STATS.spanDays.toString()],
     ];
-    const sw=(W-80)/items.length;
+    const colW=(W-PAD*2)/items.length;
     items.forEach(([lbl,val],i)=>{
-      const x=40+i*sw;
-      ctx.fillStyle='#f8fafc'; ctx.font='bold 26px system-ui,sans-serif';
-      ctx.fillText(val, x, 162);
-      ctx.fillStyle='#64748b'; ctx.font='11px monospace';
-      ctx.fillText(lbl.toUpperCase(), x, 180);
+      const cx=PAD+i*colW+colW/2;
+      ctx.textAlign='center';
+      ctx.fillStyle='#f1f5f9';
+      ctx.font='700 28px ui-sans-serif,system-ui,sans-serif';
+      ctx.fillText(val, cx, statY);
+      ctx.fillStyle='#4b5563';
+      ctx.font='600 10px ui-monospace,monospace';
+      ctx.fillText(lbl.toUpperCase(), cx, statY+20);
     });
+    ctx.textAlign='left';
 
-    // Divider
-    ctx.strokeStyle='#1e2235'; ctx.lineWidth=1;
-    ctx.beginPath(); ctx.moveTo(40,198); ctx.lineTo(W-40,198); ctx.stroke();
+    // ── Divider ──────────────────────────────────────────────────────────────
+    const divY=192;
+    ctx.strokeStyle='#1a1f35'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(PAD,divY); ctx.lineTo(W-PAD,divY); ctx.stroke();
 
-    // Achievements label
-    ctx.fillStyle='#64748b'; ctx.font='bold 10px monospace';
-    ctx.fillText('ACHIEVEMENTS UNLOCKED', 40, 224);
+    // ── Achievements ─────────────────────────────────────────────────────────
+    ctx.fillStyle='#374151';
+    ctx.font='600 10px ui-monospace,monospace';
+    ctx.fillText('ACHIEVEMENTS  '+UNLOCKED.length+' UNLOCKED', PAD, 217);
 
-    // Achievement pills
-    let px=40, py=250;
-    UNLOCKED.forEach(a=>{
+    // Pills — max 2 rows, overflow gracefully
+    ctx.font='600 12px ui-sans-serif,system-ui,sans-serif';
+    let px=PAD, py=242, rows=0;
+    const PH=26, PGAP=7, ROWH=36;
+    for(const a of UNLOCKED){
       const lbl=a.emoji+' '+a.name;
-      ctx.font='bold 12px system-ui,sans-serif';
       const tw=ctx.measureText(lbl).width;
-      const pw=tw+24, ph=26;
-      if(px+pw>W-40){ px=40; py+=38; }
-      ctx.fillStyle=a.tierColor+'28';
-      ctx.strokeStyle=a.tierColor+'88'; ctx.lineWidth=1;
-      roundRect(ctx,px,py-18,pw,ph,5); ctx.fill(); ctx.stroke();
+      const pw=tw+20;
+      if(px+pw>W-PAD){
+        if(++rows>=2) break;
+        px=PAD; py+=ROWH;
+      }
+      // pill background
+      ctx.fillStyle=a.tierColor+'22';
+      ctx.strokeStyle=a.tierColor+'77'; ctx.lineWidth=1;
+      roundRect(ctx,px,py-PH+4,pw,PH,5); ctx.fill(); ctx.stroke();
+      // pill text
       ctx.fillStyle=a.tierColor;
-      ctx.fillText(lbl, px+12, py-1);
-      px+=pw+8;
-    });
+      ctx.fillText(lbl, px+10, py-3);
+      px+=pw+PGAP;
+    }
 
-    // Footer bar
-    ctx.fillStyle='#0d0f1e'; ctx.fillRect(0,H-40,W,40);
-    ctx.fillStyle='#334155'; ctx.font='11px monospace';
-    ctx.fillText('github.com/ElementalInsights/claude-wrapped', 40, H-14);
+    // ── Footer ────────────────────────────────────────────────────────────────
+    const FY=H-36;
+    ctx.fillStyle='#0a0d1c'; ctx.fillRect(0,FY,W,H-FY);
+    ctx.strokeStyle='#1a1f35'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(0,FY); ctx.lineTo(W,FY); ctx.stroke();
+
+    ctx.fillStyle='#374151';
+    ctx.font='500 11px ui-monospace,monospace';
+    ctx.fillText('github.com/ElementalInsights/claude-wrapped', PAD, H-14);
+
     const tag='claude-wrapped';
+    ctx.font='700 11px ui-monospace,monospace';
     const tagW=ctx.measureText(tag).width;
-    const grad2=ctx.createLinearGradient(W-40-tagW,0,W-40,0);
+    const grad2=ctx.createLinearGradient(W-PAD-tagW,0,W-PAD,0);
     grad2.addColorStop(0,'#4ade80'); grad2.addColorStop(1,'#22d3ee');
-    ctx.fillStyle=grad2; ctx.font='bold 11px monospace';
-    ctx.fillText(tag, W-40-tagW, H-14);
+    ctx.fillStyle=grad2;
+    ctx.fillText(tag, W-PAD-tagW, H-14);
 
     return canvas;
   }
