@@ -52,6 +52,28 @@ export function analyze(sessions, { projectSessions = [], redact = true } = {}) 
       v,
     ]);
 
+  // Unique tool count
+  const uniqueToolCount = Object.keys(toolTotals).length;
+
+  // Unique file extensions (from raw filenames, before redaction)
+  const extSet = new Set();
+  for (const fname of Object.keys(fileTotals)) {
+    const ext = fname.match(/\.[^.]+$/)?.[0];
+    if (ext) extSet.add(ext.toLowerCase());
+  }
+  const uniqueExtensions = extSet.size;
+
+  // Total unique files edited (pre-redaction)
+  const totalFilesEdited = Object.keys(fileTotals).length;
+
+  // Total API errors across all sessions
+  const totalApiErrors = sessions.reduce((s, x) => s + x.apiErrors, 0);
+
+  // Longest single session by message count
+  const maxSessionMsgs = sessions.reduce(
+    (max, s) => Math.max(max, s.userMessages + s.assistantMessages), 0
+  );
+
   // Most intense session (most compacts)
   const spikeSession = [...sessions].sort((a, b) => b.compacts - a.compacts)[0];
 
@@ -131,5 +153,10 @@ export function analyze(sessions, { projectSessions = [], redact = true } = {}) 
     projects,
     messagesByHour,
     messagesByDow,
+    uniqueToolCount,
+    uniqueExtensions,
+    totalFilesEdited,
+    totalApiErrors,
+    maxSessionMsgs,
   };
 }

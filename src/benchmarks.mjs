@@ -158,6 +158,61 @@ export function getAchievements(stats) {
     fmtThreshold: v => `≥ ${v} min single turn`,
   });
 
+  // ── 8. The Polyglot — unique file extensions touched ─────────────────────
+  push(stats.uniqueExtensions, [5, 10, 15, 20], {
+    id:           'polyglot',
+    name:         'The Polyglot',
+    emoji:        '🌐',
+    stat:         `${stats.uniqueExtensions} file type${stats.uniqueExtensions !== 1 ? 's' : ''}`,
+    flavor:       `You touched ${stats.uniqueExtensions} distinct file extensions. That's a full-stack mind.`,
+    baseline:     'Most projects: 3–6 file types',
+    fmtThreshold: v => `≥ ${v} unique extensions`,
+  });
+
+  // ── 9. Session Marathon — longest session by message count ───────────────
+  push(stats.maxSessionMsgs, [100, 250, 500, 1_000], {
+    id:           'marathon',
+    name:         'Session Marathon',
+    emoji:        '🏃',
+    stat:         `${stats.maxSessionMsgs.toLocaleString()} msgs, 1 session`,
+    flavor:       `${stats.maxSessionMsgs} messages in a single session. Did you sleep?`,
+    baseline:     'Typical session: 20–60 messages',
+    fmtThreshold: v => `≥ ${v.toLocaleString()} msgs in one session`,
+  });
+
+  // ── 10. Tool Junkie — unique Claude tools used ───────────────────────────
+  push(stats.uniqueToolCount, [5, 8, 11, 14], {
+    id:           'tools',
+    name:         'Tool Junkie',
+    emoji:        '🔧',
+    stat:         `${stats.uniqueToolCount} tools used`,
+    flavor:       `You reached for ${stats.uniqueToolCount} different Claude tools. Power user confirmed.`,
+    baseline:     'Casual users: 3–5 tools',
+    fmtThreshold: v => `≥ ${v} unique tools`,
+  });
+
+  // ── 11. The Editor — total unique files touched ───────────────────────────
+  push(stats.totalFilesEdited, [25, 100, 300, 1_000], {
+    id:           'files',
+    name:         'The Editor',
+    emoji:        '📝',
+    stat:         `${stats.totalFilesEdited.toLocaleString()} files`,
+    flavor:       `${stats.totalFilesEdited} unique files edited. The codebase knows your name.`,
+    baseline:     'Small project: 10–30 files',
+    fmtThreshold: v => `≥ ${v.toLocaleString()} unique files edited`,
+  });
+
+  // ── 12. The Debugger — total API errors ──────────────────────────────────
+  push(stats.totalApiErrors, [10, 50, 150, 500], {
+    id:           'errors',
+    name:         'The Debugger',
+    emoji:        '🐛',
+    stat:         `${stats.totalApiErrors.toLocaleString()} API errors`,
+    flavor:       `${stats.totalApiErrors} API errors. You hit the wall and kept going.`,
+    baseline:     'Low-friction users: < 10 API errors',
+    fmtThreshold: v => `≥ ${v} API errors`,
+  });
+
   // Sort: unlocked first (platinum → gold → silver → bronze), then locked
   const order = { platinum: 0, gold: 1, silver: 2, bronze: 3 };
   achievements.sort((a, b) => {
