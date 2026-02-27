@@ -332,30 +332,27 @@ footer a:hover{color:var(--text)}
 .ach-flavor{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:8px}
 .ach-baseline{font-size:11px;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace}
 .ach-note{font-size:12px;color:var(--dim);margin-top:20px;padding-top:16px;border-top:1px solid var(--border)}
-.ach-section-header{display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:12px;margin-bottom:24px}
-.ach-section-header .section-title{margin-bottom:0}
-.ach-section-header .section-desc{margin-bottom:0}
-.ach-header-text{flex:1}
-.share-bench-btn{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;font-family:inherit}
-.share-bench-btn:hover{border-color:var(--green);color:var(--green);background:rgba(74,222,128,.06)}
+/* Hero share button */
+.hero-share-btn{background:transparent;border:1px solid rgba(74,222,128,.25);border-radius:20px;color:var(--dim);font-size:12px;font-weight:500;padding:6px 16px;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.04em;margin-top:18px;display:inline-flex;align-items:center;gap:6px}
+.hero-share-btn:hover{border-color:var(--green);color:var(--green);background:rgba(74,222,128,.06)}
 /* Share benchmark modal */
 #share-modal{position:fixed;inset:0;z-index:1001;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 #share-modal.open{opacity:1;pointer-events:all}
 #share-modal-backdrop{position:absolute;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(4px)}
-#share-modal-box{position:relative;background:#13162a;border:1px solid var(--border);border-radius:16px;padding:32px;width:min(540px,92vw);z-index:1;transform:scale(.93) translateY(12px);transition:transform .25s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto}
+#share-modal-box{position:relative;background:#13162a;border:1px solid var(--border);border-radius:16px;padding:28px 32px;width:min(540px,92vw);z-index:1;transform:scale(.93) translateY(12px);transition:transform .25s cubic-bezier(.34,1.56,.64,1);max-height:90vh;overflow-y:auto}
 #share-modal.open #share-modal-box{transform:scale(1) translateY(0)}
 #share-modal-close{position:absolute;top:14px;right:16px;background:none;border:none;color:var(--dim);font-size:20px;cursor:pointer;line-height:1;padding:4px 8px;border-radius:6px}
 #share-modal-close:hover{color:var(--text);background:var(--surface)}
-.sm-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px}
-.sm-subtitle{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5}
-.sm-code{background:#0c0e1a;border:1px solid var(--border);border-radius:8px;padding:16px;font-family:'SF Mono','Cascadia Code',monospace;font-size:12px;color:#94a3b8;line-height:1.7;white-space:pre;overflow-x:auto;margin-bottom:16px}
-.sm-actions{display:flex;gap:10px;flex-wrap:wrap}
-.sm-btn{display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit}
+.sm-title{font-size:18px;font-weight:700;color:var(--text);margin-bottom:5px}
+.sm-subtitle{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.5}
+.sm-code{background:#0c0e1a;border:1px solid var(--border);border-radius:8px;padding:14px 16px;font-family:'SF Mono','Cascadia Code',monospace;font-size:11.5px;color:#94a3b8;line-height:1.65;white-space:pre;overflow-x:auto;margin-bottom:14px}
+.sm-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sm-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit;white-space:nowrap}
 .sm-btn-copy{background:var(--green);color:#0a0d1a}
 .sm-btn-copy:hover{background:#86efac}
-.sm-btn-discuss{background:transparent;border:1px solid var(--border);color:var(--muted)}
-.sm-btn-discuss:hover{border-color:var(--cyan);color:var(--cyan)}
-.sm-copied{font-size:12px;color:var(--green);margin-left:4px;opacity:0;transition:opacity .3s}
+.sm-btn-secondary{background:transparent;border:1px solid var(--border);color:var(--muted)}
+.sm-btn-secondary:hover{border-color:var(--cyan);color:var(--cyan)}
+.sm-copied{font-size:11px;color:var(--green);opacity:0;transition:opacity .3s}
 /* Achievement popup modal */
 #ach-modal{position:fixed;inset:0;z-index:1000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s}
 #ach-modal.open{opacity:1;pointer-events:all}
@@ -395,6 +392,23 @@ footer a:hover{color:var(--text)}
   <span class="nav-sub">${projectName}${dateRange ? ` · ${dateRange}` : ''}</span>
 </nav>
 
+<!-- Share benchmark modal (always rendered) -->
+<div id="share-modal">
+  <div id="share-modal-backdrop"></div>
+  <div id="share-modal-box">
+    <button id="share-modal-close" aria-label="Close">✕</button>
+    <div class="sm-title">📊 Share your benchmark data</div>
+    <div class="sm-subtitle">Help calibrate community thresholds — anonymous aggregate counts only. No code, filenames, or conversation content.</div>
+    <div class="sm-code" id="sm-code-block"></div>
+    <div class="sm-actions">
+      <button class="sm-btn sm-btn-copy" id="sm-copy-btn">📋 Copy</button>
+      <button class="sm-btn sm-btn-secondary" id="sm-discuss-btn">💬 Discussion</button>
+      <button class="sm-btn sm-btn-secondary" id="sm-card-btn">🖼️ Share card</button>
+      <span class="sm-copied" id="sm-copied">Copied!</span>
+    </div>
+  </div>
+</div>
+
 <section class="hero">
   <div class="container">
     <div class="eyebrow">Claude Wrapped</div>
@@ -408,6 +422,7 @@ footer a:hover{color:var(--text)}
       <div class="stat"><div class="stat-val p" id="s5">0</div><div class="stat-lbl">Lines Written</div></div>
     </div>
     <div class="pill" id="pill0"><span>${comparisons[0].emoji} ${comparisons[0].compare}</span></div>
+    <div><button class="hero-share-btn" id="share-bench-btn">📊 Share benchmark data</button></div>
   </div>
 </section>
 
@@ -536,23 +551,6 @@ ${projects.length > 1 ? `
   </div>
 </section>
 
-${achievements.length > 0 ? `
-<!-- Share benchmark modal -->
-<div id="share-modal">
-  <div id="share-modal-backdrop"></div>
-  <div id="share-modal-box">
-    <button id="share-modal-close" aria-label="Close">✕</button>
-    <div class="sm-title">📊 Share your benchmark data</div>
-    <div class="sm-subtitle">Help calibrate the community thresholds — everything here is anonymous aggregate counts only. No code, no filenames, no conversation content.</div>
-    <div class="sm-code" id="sm-code-block"></div>
-    <div class="sm-actions">
-      <button class="sm-btn sm-btn-copy" id="sm-copy-btn">📋 Copy to clipboard</button>
-      <button class="sm-btn sm-btn-discuss" id="sm-discuss-btn">💬 Open GitHub Discussion →</button>
-      <span class="sm-copied" id="sm-copied">Copied!</span>
-    </div>
-  </div>
-</div>
-
 <!-- Achievement popup modal -->
 <div id="ach-modal">
   <div id="ach-modal-backdrop"></div>
@@ -569,13 +567,8 @@ ${achievements.length > 0 ? `
 <section class="section" id="ach-section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container-wide">
     <div class="section-eyebrow">Achievements</div>
-    <div class="ach-section-header">
-      <div class="ach-header-text">
-        <div class="section-title">${achievements.filter(a => a.unlocked).length} / ${achievements.length} unlocked</div>
-        <div class="section-desc">Stacked against estimated 2026 community baselines. Click any card to see the tier breakdown.</div>
-      </div>
-      <button class="share-bench-btn" id="share-bench-btn">📊 Share benchmark data</button>
-    </div>
+    <div class="section-title">${achievements.filter(a => a.unlocked).length} / ${achievements.length} unlocked</div>
+    <div class="section-desc">Stacked against estimated 2026 community baselines. Click any card to see the tier breakdown.</div>
     <div class="ach-grid">
       ${achievements.map(a => `
       <div class="ach-card reveal${a.unlocked ? '' : ' locked'}"
@@ -595,7 +588,7 @@ ${achievements.length > 0 ? `
     </div>
     <div class="ach-note">Baselines are estimates — not official Anthropic data. As community benchmarks improve, thresholds will update.</div>
   </div>
-</section>` : ''}
+</section>
 
 ${messagesByHour.some(v => v > 0) ? `
 <section class="section" id="work-section" style="padding-top:0;border-top:1px solid var(--border)">
@@ -811,8 +804,11 @@ if(document.getElementById('ach-section')){
   });
   backdrop.addEventListener('click', closeModal);
   closeBtn.addEventListener('click',  closeModal);
-  document.addEventListener('keydown', e=>{ if(e.key==='Escape'){ closeModal(); closeShareModal(); } });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+}
 
+// ── Share benchmark modal (always active — button lives in hero) ──────────────
+{
   // ── Share benchmark modal ─────────────────────────────────────────────────
   const BENCH = ${JSON.stringify(benchStats)};
 
@@ -822,6 +818,7 @@ if(document.getElementById('ach-section')){
   const shareBtn      = document.getElementById('share-bench-btn');
   const copyBtn       = document.getElementById('sm-copy-btn');
   const discussBtn    = document.getElementById('sm-discuss-btn');
+  const cardBtn       = document.getElementById('sm-card-btn');
   const copiedLabel   = document.getElementById('sm-copied');
   const codeBlock     = document.getElementById('sm-code-block');
 
@@ -984,17 +981,13 @@ if(document.getElementById('ach-section')){
     return canvas;
   }
 
-  // Inject "Download share card" button into share modal actions
-  const cardBtn=document.createElement('button');
-  cardBtn.className='sm-btn sm-btn-discuss';
-  cardBtn.innerHTML='🖼️ Download share card';
   cardBtn.addEventListener('click',()=>{
     const a=document.createElement('a');
     a.download='claude-wrapped.png';
     a.href=drawShareCard().toDataURL('image/png');
     a.click();
   });
-  document.querySelector('.sm-actions').appendChild(cardBtn);
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeShareModal(); });
 }
 
 // ── Project bars ─────────────────────────────────────────────────────────────
