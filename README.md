@@ -2,6 +2,9 @@
 
 Spotify Wrapped for your Claude Code sessions.
 
+<img width="1600" height="880" alt="claude-wrapped (4)" src="https://github.com/user-attachments/assets/58a963d4-4229-4407-b7a3-8d56b743fa6a" />
+
+
 Parses the `.jsonl` session files Claude Code saves locally, crunches the numbers, and generates a self-contained `index.html` — animated stats, charts, and comparisons that tell the story of how you actually used AI to write code.
 
 No server. No account. No dependencies. One command.
