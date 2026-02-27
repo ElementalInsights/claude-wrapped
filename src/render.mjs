@@ -286,7 +286,11 @@ ${author ? `
 
 <footer>
   <span>${projectName} · Claude Wrapped</span>
-  <a href="https://github.com/your-org/claude-wrapped" target="_blank" rel="noopener">claude-wrapped</a>
+  <span style="display:flex;gap:20px;align-items:center">
+    <a href="https://github.com/ElementalInsights/claude-wrapped" target="_blank" rel="noopener">claude-wrapped</a>
+    <a href="https://www.linkedin.com/in/jake-edwards-a6a334a/" target="_blank" rel="noopener">Jake Edwards</a>
+    <a href="https://elementalinsights.com" target="_blank" rel="noopener">elementalinsights.com</a>
+  </span>
 </footer>
 
 <div id="tip"></div>

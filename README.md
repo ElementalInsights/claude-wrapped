@@ -182,3 +182,7 @@ Bug reports and PRs welcome. Keep it zero-dependency. If you're adding a new vis
 ## License
 
 MIT
+
+---
+
+Created by [Jake Edwards](https://www.linkedin.com/in/jake-edwards-a6a334a/) · Co-founder at [Elemental Insights](https://elementalinsights.com)

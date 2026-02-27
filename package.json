@@ -10,5 +10,6 @@
     "start": "node bin/cli.mjs"
   },
   "keywords": ["claude", "claude-code", "ai", "developer-tools", "visualization"],
+  "author": "Jake Edwards <jake@elementalinsights.com> (https://www.linkedin.com/in/jake-edwards-a6a334a/)",
   "license": "MIT"
 }
