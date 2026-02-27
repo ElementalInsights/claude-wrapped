@@ -63,6 +63,7 @@ if (flag('--help') || flag('-h')) {
     --tagline <text>    Custom subtitle shown in hero
     --out     <dir>     Output directory  (default: ./wrapped)
     --config  <file>    Load options from a JSON config file
+    --no-redact         Show real file/project names (default: anonymised)
     --help              Show this help
 
   Examples:
@@ -87,10 +88,11 @@ if (configFile) {
 }
 
 // CLI args override config
-if (arg('--project')) config.project = arg('--project');
-if (arg('--author'))  config.author  = arg('--author');
-if (arg('--tagline')) config.tagline = arg('--tagline');
-if (arg('--out'))     config.out     = arg('--out');
+if (arg('--project'))    config.project   = arg('--project');
+if (arg('--author'))     config.author    = arg('--author');
+if (arg('--tagline'))    config.tagline   = arg('--tagline');
+if (arg('--out'))        config.out       = arg('--out');
+if (flag('--no-redact')) config.noRedact  = true;
 
 const outDir      = resolve(config.out || './wrapped');
 const sessionsArg = arg('--sessions') || config.sessions;
@@ -156,7 +158,9 @@ config.project = config.project || 'My Project';
 
 // Analyze + render
 console.log(`\n  Analyzing ${allSessions.length} sessions...`);
-const stats       = analyze(allSessions, { projectSessions });
+const redact      = !config.noRedact;
+if (!redact) console.log(`  ⚠  --no-redact: file names and project names will appear in the output`);
+const stats       = analyze(allSessions, { projectSessions, redact });
 const comparisons = getComparisons(stats);
 
 console.log(`  Rendering...`);

@@ -69,6 +69,7 @@ Open `./wrapped/index.html`. Done.
 | `--tagline <text>` | Subtitle under the project name | auto-generated |
 | `--out <dir>` | Output directory | `./wrapped` |
 | `--config <file>` | Load options from a JSON file | `claude-wrapped.config.json` |
+| `--no-redact` | Show real file and project names (default: anonymised) | — |
 
 ### Examples
 
@@ -104,6 +105,22 @@ Drop a `claude-wrapped.config.json` anywhere and run `node bin/cli.mjs`:
 ```
 
 For multi-project via config, use `--pick` flags on the CLI (repeatable flags aren't in the config file yet).
+
+---
+
+## Privacy
+
+The output HTML contains **no conversation content** — no prompts, no code, no responses. Only aggregate counts: messages, resets, lines written, turn durations, tool call counts, and timestamps.
+
+By default, `claude-wrapped` anonymises the two things that could hint at what you were building:
+
+| What | Default | With `--no-redact` |
+|------|---------|---------------------|
+| File names in "Most Edited Files" | `file-1.tsx`, `file-2.ts` … | `render.mjs`, `schema.sql` … |
+| Project names in "By Project" | `Project A`, `Project B` … | `my-saas`, `client-work` … |
+| Session slugs (tooltip on chart) | hidden | shown |
+
+Use `--no-redact` when generating a version just for yourself. Share the default output safely.
 
 ---
 

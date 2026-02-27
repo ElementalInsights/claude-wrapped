@@ -1,5 +1,5 @@
 // analyze.mjs — compute aggregate stats from sessions array
-export function analyze(sessions, { projectSessions = [] } = {}) {
+export function analyze(sessions, { projectSessions = [], redact = true } = {}) {
   const totalMessages   = sessions.reduce((s, x) => s + x.userMessages + x.assistantMessages, 0);
   const totalCompacts   = sessions.reduce((s, x) => s + x.compacts, 0);
   const totalBytes      = sessions.reduce((s, x) => s + x.fileSizeBytes, 0);
@@ -46,15 +46,19 @@ export function analyze(sessions, { projectSessions = [] } = {}) {
   }
   const topFiles = Object.entries(fileTotals)
     .sort((a, b) => b[1] - a[1])
-    .slice(0, 5);
+    .slice(0, 5)
+    .map(([k, v], i) => [
+      redact ? `file-${i + 1}${k.match(/\.[^.]+$/)?.[0] || ''}` : k,
+      v,
+    ]);
 
   // Most intense session (most compacts)
   const spikeSession = [...sessions].sort((a, b) => b.compacts - a.compacts)[0];
 
   // Slim session data for chart (keep small)
-  const slim = sessions.map(s => ({
+  const slim = sessions.map((s, i) => ({
     id:       s.id,
-    slug:     s.slug,
+    slug:     redact ? null : s.slug,
     compacts: s.compacts,
     sizeMB:   +(s.fileSizeBytes / 1024 / 1024).toFixed(2),
     msgs:     s.userMessages + s.assistantMessages,
@@ -66,7 +70,8 @@ export function analyze(sessions, { projectSessions = [] } = {}) {
   // ── Per-project breakdown ─────────────────────────────────────────────────
   const projects = projectSessions.length > 1
     ? projectSessions
-        .map(({ name, sessions: ps }) => {
+        .map(({ name, sessions: ps }, i) => {
+          const displayName = redact ? `Project ${String.fromCharCode(65 + i)}` : name;
           const msgs   = ps.reduce((s, x) => s + x.userMessages + x.assistantMessages, 0);
           const resets = ps.reduce((s, x) => s + x.compacts, 0);
           const lines  = ps.reduce((s, x) => s + x.linesWritten, 0);
@@ -74,7 +79,7 @@ export function analyze(sessions, { projectSessions = [] } = {}) {
           const tmap   = {};
           for (const s of ps) for (const [k, v] of Object.entries(s.toolCalls)) tmap[k] = (tmap[k] || 0) + v;
           const topTool = Object.entries(tmap).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
-          return { name, sessions: ps.length, messages: msgs, compacts: resets, lines, computeHrs: +(cmMs / 3600000).toFixed(1), topTool };
+          return { name: displayName, sessions: ps.length, messages: msgs, compacts: resets, lines, computeHrs: +(cmMs / 3600000).toFixed(1), topTool };
         })
         .sort((a, b) => b.messages - a.messages)
     : [];

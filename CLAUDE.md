@@ -10,9 +10,9 @@
 |------|---------|
 | `bin/cli.mjs` | Entry point. Parses CLI args, loads config file, orchestrates extract → analyze → render. |
 | `src/extract.mjs` | Reads `.jsonl` files from a directory, parses each line, returns an array of session objects. |
-| `src/analyze.mjs` | Takes session array, computes aggregate stats (counts, totals, averages, top lists). |
+| `src/analyze.mjs` | Takes session array + options, computes aggregate stats (counts, totals, averages, top lists, rhythms). |
 | `src/comparisons.mjs` | Arrays of `{ min, label, emoji }` thresholds for fun metric comparisons. Pure data, no logic. |
-| `src/render.mjs` | Single function that takes `stats` + `config`, returns a self-contained HTML string. |
+| `src/render.mjs` | Single function that takes `stats` + `comparisons` + `config`, returns a self-contained HTML string. |
 | `package.json` | Package metadata. Zero runtime dependencies. `"type": "module"` for ESM. |
 
 ---
@@ -23,21 +23,22 @@
 
 ```js
 {
-  id: string,              // derived from filename
-  startedAt: Date,
-  durationMs: number,
-  messages: number,        // total message count
-  contextResets: number,   // count of compact_boundary events
-  toolCalls: {             // map of tool name → count
-    [toolName: string]: number
-  },
-  editedFiles: string[],   // file paths touched by Write/Edit tool calls
-  turns: {
-    count: number,
-    longestMs: number,
-    totalMs: number        // sum of all turn durations (excludes idle)
-  },
-  bytesGenerated: number   // sum of assistant message content lengths
+  id:               string,   // first 8 chars of .jsonl filename
+  slug:             string | null,
+  gitBranch:        string | null,
+  startTime:        string | null,   // ISO 8601 (first timestamp in file)
+  endTime:          string | null,   // ISO 8601 (last timestamp in file)
+  fileSizeBytes:    number,
+  userMessages:     number,
+  assistantMessages:number,
+  compacts:         number,          // compact_boundary events = context resets
+  compactPositions: number[],        // normalised positions (0–1) within file
+  turnDurations:    number[],        // ms per assistant turn (from turn_duration events)
+  toolCalls:        { [toolName: string]: number },
+  filesEdited:      { [filename: string]: number },  // filename only (no full path)
+  linesWritten:     number,          // newline count across all Edit/Write outputs
+  apiErrors:        number,
+  totalRecords:     number
 }
 ```
 
@@ -46,41 +47,53 @@
 ```js
 {
   // Totals
-  sessions: number,
-  messages: number,
-  contextResets: number,
-  bytesGenerated: number,
-  linesWritten: number,    // estimated: bytesGenerated / 50
-
-  // Per-day averages (based on active days)
-  avgMessagesPerDay: number,
-  avgResetsPerDay: number,
-  avgMbPerDay: number,
-  avgComputeHoursPerDay: number,
+  sessionCount:   number,
+  totalMessages:  number,
+  totalCompacts:  number,
+  totalGB:        number,
+  totalMB:        number,
+  totalLines:     number,
+  totalComputeMs: number,
 
   // Turn stats
-  longestTurnMs: number,
   avgTurnMs: number,
+  maxTurnMs: number,
 
-  // Top lists
-  topTools: Array<{ name: string, count: number }>,   // top 8, sorted desc
-  topFiles: Array<{ path: string, count: number }>,   // top 10, sorted desc
+  // Per-day averages (spanned from firstDay to lastDay)
+  msgsPerDay:     number,
+  compactsPerDay: number,
+  mbPerDay:       number,
+  computeHrsDay:  number,
 
-  // Spike session (worst/most intense single session)
-  spikeSession: {
-    id: string,
-    date: string,
-    messages: number,
-    contextResets: number,
-    durationMs: number
-  },
+  // Date range
+  spanDays: number,
+  firstDay: string,   // 'YYYY-MM-DD'
+  lastDay:  string,
 
-  // Timeline data for the bar chart
-  timeline: Array<{
-    date: string,          // ISO date string
-    messages: number,
-    resets: number         // used for bar segmentation
-  }>
+  // Top lists — sorted desc by count
+  topTools: [string, number][],   // [toolName, callCount] — top 8
+  topFiles: [string, number][],   // [filename, editCount] — top 5; anonymised by default
+
+  // Hardest session
+  spikeSession: { compacts: number, sizeMB: number, slug: string },
+
+  // Slim chart data — one entry per session, sorted by startTime
+  slim: Array<{
+    id: string, slug: string | null, compacts: number,
+    sizeMB: number, msgs: number, positions: number[],
+    turns: number[], start: string | null
+  }>,
+
+  // Per-project breakdown (only populated when >1 project directory loaded)
+  // Names are anonymised by default ('Project A', 'Project B' ...)
+  projects: Array<{
+    name: string, sessions: number, messages: number,
+    compacts: number, lines: number, computeHrs: number, topTool: string
+  }>,
+
+  // Coding rhythm (derived from session startTime — hour/day sessions began)
+  messagesByHour: number[24],   // index = hour of day (0–23, local time)
+  messagesByDow:  number[7],    // index = day of week (0=Mon … 6=Sun)
 }
 ```
 
@@ -88,13 +101,26 @@
 
 ```js
 {
-  sessions: string,        // resolved absolute path to .jsonl directory (or parent)
-  project: string,         // display name
-  author: string | null,
-  tagline: string | null,
-  out: string              // resolved absolute path to output directory
+  sessions:  string,         // resolved absolute path to .jsonl directory
+  project:   string,         // display name shown in header
+  author:    string | null,
+  tagline:   string | null,
+  out:       string,         // resolved absolute path to output directory
+  noRedact:  boolean         // true = real names; default false = anonymised
 }
 ```
+
+---
+
+## Privacy & redaction
+
+`analyze()` accepts `{ redact: true }` (the default). When redacting:
+
+- **File names** (`topFiles`) → `file-1.tsx`, `file-2.ts` … (extension preserved)
+- **Project names** (`projects[].name`) → `Project A`, `Project B` …
+- **Session slugs** (`slim[].slug`) → `null`
+
+Pass `{ redact: false }` only when the user passes `--no-redact`. The output HTML never contains conversation content — only counts, durations, and timestamps.
 
 ---
 
@@ -121,27 +147,38 @@ Rules:
 
 ## How to add a new template section
 
-Edit **`src/render.mjs`** only. The render function returns one long template literal. Sections are clearly delimited by HTML comments:
+Edit **`src/render.mjs`** only. The render function returns one long template literal. Add new `<section>` blocks in page-flow order. For conditional sections, gate with a ternary:
 
 ```js
-// Inside the returned template string:
+// Unconditional:
+`<section class="section" id="my-section">...</section>`
 
-/* === YOUR NEW SECTION === */
-`
-<section class="section" id="my-section">
-  <h2 class="section-title">My New Section</h2>
-  <p>${stats.myNewStat}</p>
-</section>
-`
+// Conditional (e.g. only when data exists):
+`${stats.myData.length > 0 ? `<section ...>...</section>` : ''}`
 ```
 
 Steps:
-1. If the section needs data that isn't in `stats` yet, add the computation to `src/analyze.mjs` and return it in the stats object.
-2. Add the HTML block inside the template literal in the logical position in the page flow.
-3. Add any CSS inline (inside the `<style>` block in the template) — keep it self-contained.
-4. If the section needs JS (animation, chart), add it to the `<script>` block at the bottom of the template.
+1. If the section needs data not yet in `stats`, add the computation to `src/analyze.mjs` and return it.
+2. Add HTML inside the template literal.
+3. Add CSS in the `<style>` block at the top of the template.
+4. Add JS animations/interactivity in the `<script>` block at the bottom.
+5. Guard any ScrollTrigger.create calls with `if(document.getElementById('my-section'))` so they don't throw when the section is absent.
 
 Do NOT split `render.mjs` into multiple files. The self-contained single-file output depends on everything being assembled in one place.
+
+---
+
+## Page sections (render order)
+
+1. **Hero** — animated count-up stats + comparison pill
+2. **Your Average Day** — 6 metric cards
+3. **By Project** — horizontal bars per project *(hidden when ≤1 project)*
+4. **The Context Pulse** — SVG bar chart (bars reveal via clipPath as playhead sweeps)
+5. **Put in Perspective** — 5 comparison cards
+6. **When You Work** — 24-cell hour heatmap + day-of-week bars *(hidden when no timestamps)*
+7. **Top Tool Calls + Most Edited Files** — two-column list
+8. **Author card** *(hidden when `--author` not set)*
+9. **Footer**
 
 ---
 
@@ -149,14 +186,13 @@ Do NOT split `render.mjs` into multiple files. The self-contained single-file ou
 
 Edit **`bin/cli.mjs`** only.
 
-1. Add the flag to the arg parsing section (the tool uses a simple manual loop over `process.argv`):
+1. Add detection using the `flag(f)` or `arg(f)` helpers:
    ```js
-   case '--my-flag':
-     config.myFlag = args[++i];
-     break;
+   if (flag('--my-flag'))   config.myFlag = true;
+   if (arg('--my-value'))   config.myValue = arg('--my-value');
    ```
-2. Add the corresponding key to the config file schema (document it in the `README.md` options table).
-3. Pass the value through to wherever it's consumed — typically `render.mjs` via the config object, or `extract.mjs` for filtering flags like `--since`.
+2. Add it to the `--help` text.
+3. Pass the value through to wherever it's consumed — typically `render.mjs` via the config object, or `analyze.mjs` for data-shaping flags like `--no-redact`.
 
 ---
 
@@ -167,6 +203,7 @@ Edit **`bin/cli.mjs`** only.
 - **Do not change `src/extract.mjs` parsing logic without testing against real `.jsonl` files.** The file format is undocumented and has evolved. The parsing is the most fragile part of the system. If you change it, run against actual session files from `~/.claude/projects/` before shipping.
 - **Do not write to `~/.claude/` or any user data directory.** Read only. Output only goes to the `--out` directory.
 - **Do not assume `.jsonl` lines are well-formed.** Wrap JSON.parse calls in try/catch. Malformed lines should be skipped, not crash the tool.
+- **Do not expose real file/project names by default.** Redaction (`redact: true`) is the default. Only disable with explicit `--no-redact`.
 
 ---
 
@@ -175,36 +212,22 @@ Edit **`bin/cli.mjs`** only.
 There is no test suite. The test is: generate a wrapped page and open it.
 
 ```bash
-# Against your real sessions (full run)
+# Default (redacted, all projects)
 node bin/cli.mjs --out ./test-out
-open ./test-out/index.html
 
-# Against a specific project
+# Single project
 node bin/cli.mjs --sessions ~/.claude/projects/my-project --out ./test-out
-open ./test-out/index.html
 
-# With all display options
+# Multiple projects with real names
+node bin/cli.mjs --pick project-a --pick project-b --no-redact --out ./test-out
+
+# Full options
 node bin/cli.mjs \
   --sessions ~/.claude/projects/my-project \
   --project "My Project" \
   --author "Jane Smith" \
   --tagline "A year of shipping" \
   --out ./test-out
-open ./test-out/index.html
 ```
 
-Check: Does the page load without console errors? Do the animations play? Are the numbers plausible given your actual usage? Does it look right on a narrow viewport?
-
----
-
-## Comparisons quick reference
-
-Each metric has its own comparison array in `src/comparisons.mjs`. Current metrics with comparisons:
-
-| Stat | Comparison array |
-|------|-----------------|
-| `linesWritten` | Novel lengths (Gatsby → War & Peace) |
-| `contextResets` | Countries, mountain ranges, etc. |
-| `sessions` | Notable streaks and milestones |
-| `messages` | Human conversations, books, etc. |
-| `bytesGenerated` | Wikipedia articles, encyclopedias |
+Check: Does the page load without console errors? Do the animations play? Do bars reveal left→right? Does the "By Project" section show when multiple projects are loaded? Are file names anonymised by default?

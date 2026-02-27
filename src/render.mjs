@@ -17,15 +17,122 @@ export function render(stats, comparisons, config) {
 
   const dateRange = firstDay && lastDay ? `${firstDay} → ${lastDay}` : '';
 
-  // Pre-compute for new sections
+  // ── Pre-compute for rhythm section ───────────────────────────────────────
   const maxHourVal    = Math.max(...messagesByHour, 1);
-  const maxDowVal     = Math.max(...messagesByDow, 1);
   const peakHour      = messagesByHour.indexOf(Math.max(...messagesByHour));
   const peakDow       = messagesByDow.indexOf(Math.max(...messagesByDow));
   const dowNames      = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const peakHourLabel = peakHour === 0 ? '12am' : peakHour < 12 ? peakHour + 'am' : peakHour === 12 ? '12pm' : (peakHour - 12) + 'pm';
   const maxProjMsgs   = projects.length ? Math.max(...projects.map(p => p.messages), 1) : 1;
   const projColors    = ['var(--green)','var(--cyan)','var(--yellow)','var(--purple)','var(--pink)','#34d399','#f97316','#60a5fa'];
+
+  const peakHourFlavor =
+      (peakHour >= 22 || peakHour <= 4)  ? { tag: 'Night Owl',       emoji: '🦉', desc: 'You ship code when everyone else is asleep.' }
+    : peakHour <= 8                       ? { tag: 'Early Bird',      emoji: '🌅', desc: 'First up, first to ship.' }
+    : peakHour <= 12                      ? { tag: 'Morning Builder', emoji: '☀️', desc: 'Peak output before lunch.' }
+    : peakHour <= 17                      ? { tag: 'Afternoon Dev',   emoji: '🌤️', desc: 'The afternoon is when the code flows.' }
+                                          : { tag: 'Evening Coder',   emoji: '🌙', desc: 'When the office clears, the real work starts.' };
+
+  // ── Activity calendar (GitHub-style, built from slim session data) ────────
+  function buildCalendar() {
+    if (!firstDay || !lastDay || !slim.length) return null;
+
+    // Daily message counts from session start times
+    const dmap = {};
+    for (const s of slim) {
+      if (s.start) {
+        const d = s.start.split('T')[0];
+        dmap[d] = (dmap[d] || 0) + (s.msgs || 0);
+      }
+    }
+    const maxVal = Math.max(...Object.values(dmap), 1);
+
+    // Align start to the Monday on or before firstDay
+    const start = new Date(firstDay + 'T12:00:00Z');
+    const dow   = start.getUTCDay(); // 0=Sun
+    const backToMon = (dow === 0 ? 6 : dow - 1);
+    start.setUTCDate(start.getUTCDate() - backToMon);
+
+    const end = new Date(lastDay + 'T12:00:00Z');
+
+    const weeks = [];
+    const months = [];
+    let seenMonths = new Set();
+    const cur = new Date(start);
+
+    while (cur <= end) {
+      if (weeks.length === 0 || weeks[weeks.length - 1].length === 7) {
+        weeks.push([]);
+      }
+      const d     = cur.toISOString().split('T')[0];
+      const isoCur = cur.getUTCDay();
+      const isMonday = isoCur === 1 || (isoCur === 0 && weeks[weeks.length-1].length === 0);
+      const mLabel = cur.toLocaleString('en-US', { month: 'short', timeZone: 'UTC' });
+      const mKey   = cur.toISOString().substring(0, 7);
+      if (!seenMonths.has(mKey)) {
+        seenMonths.add(mKey);
+        months.push({ label: mLabel, weekIdx: weeks.length - 1 });
+      }
+      weeks[weeks.length - 1].push({
+        date:    d,
+        msgs:    dmap[d] || 0,
+        inRange: d >= firstDay && d <= lastDay,
+      });
+      cur.setUTCDate(cur.getUTCDate() + 1);
+    }
+    // Pad final week
+    while (weeks[weeks.length - 1].length < 7) {
+      weeks[weeks.length - 1].push({ date: '', msgs: 0, inRange: false });
+    }
+
+    return { weeks, months, maxVal };
+  }
+
+  const cal = buildCalendar();
+
+  // Build calendar SVG string
+  function calSvg() {
+    if (!cal) return '';
+    const CS = 11, CG = 3, STEP = CS + CG;
+    const LEFT = 14, TOP = 18;
+    const W = LEFT + cal.weeks.length * STEP;
+    const H = TOP + 7 * STEP;
+
+    function cellColor(msgs, inRange) {
+      if (!inRange || msgs === 0) return '#12151f';
+      if (msgs < 10)  return '#0d4429';
+      if (msgs < 30)  return '#006d32';
+      if (msgs < 80)  return '#26a641';
+      return '#39d353';
+    }
+
+    let svg = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:${W}px;display:block;overflow:visible" xmlns="http://www.w3.org/2000/svg">`;
+
+    // Month labels
+    for (const { label, weekIdx } of cal.months) {
+      const x = LEFT + weekIdx * STEP;
+      svg += `<text x="${x}" y="11" font-size="9" fill="#64748b" font-family="monospace">${label}</text>`;
+    }
+
+    // Day-of-week labels (Mon, Wed, Fri)
+    ['M','','W','','F','',''].forEach((lbl, i) => {
+      if (lbl) svg += `<text x="0" y="${TOP + i * STEP + CS - 2}" font-size="9" fill="#475569" font-family="monospace">${lbl}</text>`;
+    });
+
+    // Cells
+    cal.weeks.forEach((week, wi) => {
+      week.forEach((day, di) => {
+        const x   = LEFT + wi * STEP;
+        const y   = TOP  + di * STEP;
+        const col = cellColor(day.msgs, day.inRange);
+        const tip = day.inRange && day.msgs > 0 ? `${day.date} · ${day.msgs} msgs` : (day.date || '');
+        svg += `<rect x="${x}" y="${y}" width="${CS}" height="${CS}" rx="2" fill="${col}"><title>${tip}</title></rect>`;
+      });
+    });
+
+    svg += '</svg>';
+    return svg;
+  }
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -78,7 +185,7 @@ h1 span{color:var(--green)}
 .section-title{font-size:clamp(24px,4vw,40px);font-weight:700;letter-spacing:-.02em;margin-bottom:8px}
 .section-desc{color:var(--muted);font-size:17px;margin-bottom:40px}
 
-/* CARDS — generic */
+/* CARDS */
 .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
 @media(max-width:768px){.grid-3{grid-template-columns:repeat(2,1fr)}.stats-row{flex-wrap:wrap}}
@@ -139,18 +246,29 @@ h1 span{color:var(--green)}
 /* WHEN YOU WORK */
 .work-grid{display:grid;grid-template-columns:2fr 1fr;gap:48px;align-items:start}
 @media(max-width:768px){.work-grid{grid-template-columns:1fr}}
-.work-sub-title{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace;margin-bottom:16px}
+.work-sub-title{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace;margin-bottom:14px}
+/* Hour heatmap */
 .hour-hmap{display:flex;gap:2px;margin-bottom:6px}
 .hcell{flex:1;height:48px;border-radius:3px;min-width:0}
 .hour-hlbls{display:flex;gap:2px}
 .hrlbl{flex:1;font-size:9px;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace;text-align:center;min-width:0;overflow:hidden}
-.work-insight{font-size:14px;color:var(--muted);margin-top:14px}
+/* Flavor badge */
+.work-badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:6px 14px;font-size:13px;margin-top:14px}
+.work-badge-tag{font-weight:600;color:var(--text)}
+.work-badge-desc{color:var(--muted)}
+/* DOW chart — bars zone + label row are separate */
+.dow-bars-zone{display:flex;gap:6px;height:80px;align-items:flex-end;margin-bottom:6px}
+.dow-col{flex:1;display:flex;align-items:flex-end;height:100%}
+.dow-bar{width:100%;border-radius:3px 3px 0 0;background:var(--cyan);height:0;transition:height .8s ease}
+.dow-label-row{display:flex;gap:6px}
+.dow-lbl{flex:1;text-align:center;font-size:11px;font-family:'SF Mono','Cascadia Code',monospace;color:var(--dim)}
+.work-insight{font-size:14px;color:var(--muted);margin-top:12px}
 .work-insight strong{color:var(--text)}
-.dow-chart{display:flex;gap:8px;align-items:flex-end;height:90px}
-.dow-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
-.dow-cnt{font-size:9px;font-family:'SF Mono','Cascadia Code',monospace;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center}
-.dow-bar{width:100%;border-radius:3px 3px 0 0;background:var(--cyan);height:0;transition:height .8s ease;flex-shrink:0}
-.dow-lbl{font-size:11px;font-family:'SF Mono','Cascadia Code',monospace;color:var(--dim)}
+/* Activity calendar */
+.cal-wrap{margin-bottom:40px}
+.cal-title{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace;margin-bottom:14px}
+.cal-legend{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:11px;color:var(--dim)}
+.cal-swatch{width:11px;height:11px;border-radius:2px;display:inline-block}
 
 /* AUTHOR CARD */
 .author-section{border-top:1px solid var(--border);padding:56px 0}
@@ -279,7 +397,7 @@ ${projects.length > 1 ? `
           &nbsp;·&nbsp;<span id="pl-msgs">0</span> messages
         </div>
         <div class="player-btns">
-          <button class="pl-btn" id="pl-speed">0.25×</button>
+          <button class="pl-btn" id="pl-speed">2×</button>
           <button class="pl-btn" id="pl-btn">&#9646;&#9646;</button>
         </div>
       </div>
@@ -324,9 +442,25 @@ ${projects.length > 1 ? `
 ${messagesByHour.some(v => v > 0) ? `
 <section class="section" id="work-section" style="padding-top:0;border-top:1px solid var(--border)">
   <div class="container-wide">
-    <div class="section-eyebrow">When You Work</div>
-    <div class="section-title">Your coding rhythm</div>
-    <div class="section-desc">Session activity by hour of day and day of week.</div>
+    <div class="section-eyebrow">Coding Rhythm</div>
+    <div class="section-title">When you work</div>
+    <div class="section-desc">Activity patterns across your whole project.</div>
+
+    ${cal ? `
+    <div class="cal-wrap">
+      <div class="cal-title">Activity Calendar</div>
+      ${calSvg()}
+      <div class="cal-legend">
+        Less
+        <span class="cal-swatch" style="background:#12151f;border:1px solid #1e2235"></span>
+        <span class="cal-swatch" style="background:#0d4429"></span>
+        <span class="cal-swatch" style="background:#006d32"></span>
+        <span class="cal-swatch" style="background:#26a641"></span>
+        <span class="cal-swatch" style="background:#39d353"></span>
+        More
+      </div>
+    </div>` : ''}
+
     <div class="work-grid">
       <div>
         <div class="work-sub-title">Hour of Day</div>
@@ -347,21 +481,26 @@ ${messagesByHour.some(v => v > 0) ? `
             return `<span class="hrlbl">${label}</span>`;
           }).join('')}
         </div>
-        <div class="work-insight">Peak hour: <strong>${peakHourLabel}</strong></div>
+        <div class="work-badge">
+          <span>${peakHourFlavor.emoji}</span>
+          <span class="work-badge-tag">${peakHourFlavor.tag}</span>
+          <span class="work-badge-desc">· ${peakHourFlavor.desc}</span>
+        </div>
       </div>
       <div>
         <div class="work-sub-title">Day of Week</div>
-        <div class="dow-chart" id="dow-chart">
+        <div class="dow-bars-zone" id="dow-chart">
           ${dowNames.map((day, i) => {
             const v = messagesByDow[i] || 0;
-            return `<div class="dow-col">
-              <div class="dow-cnt">${v > 0 ? v.toLocaleString() : ''}</div>
+            return `<div class="dow-col" title="${day}: ${v.toLocaleString()} msgs">
               <div class="dow-bar" data-h="${v}"></div>
-              <div class="dow-lbl">${day}</div>
             </div>`;
           }).join('')}
         </div>
-        <div class="work-insight" style="margin-top:16px">Busiest day: <strong>${dowNames[peakDow]}</strong></div>
+        <div class="dow-label-row">
+          ${dowNames.map(d => `<span class="dow-lbl">${d}</span>`).join('')}
+        </div>
+        <div class="work-insight" style="margin-top:12px">Busiest day: <strong>${dowNames[peakDow]}</strong></div>
       </div>
     </div>
   </div>
@@ -422,8 +561,6 @@ window.addEventListener('scroll',()=>{
 });
 
 // count-up
-gsap.from('#s1',{textContent:0,duration:1.8,ease:'power2.out',snap:{textContent:1},scrollTrigger:{trigger:'.hero',start:'top 80%',once:true},
-  onUpdate:function(){document.getElementById('s1').textContent=Math.round(this.targets()[0]._gsap.textContent).toLocaleString()}});
 const nums=[
   {id:'s1',val:${sessionCount}},{id:'s2',val:${totalMessages}},{id:'s3',val:${totalCompacts}},
   {id:'s4',val:${totalGB},dec:2},{id:'s5',val:${totalLines}}
@@ -482,7 +619,7 @@ if(document.getElementById('work-section')){
       const mx=Math.max(...vals,1);
       bars.forEach(el=>{
         const v=+(el.dataset.h||0);
-        el.style.height=(v===0?2:Math.max(4,Math.round(v/mx*80)))+'px';
+        el.style.height=(v===0?2:Math.max(4,Math.round(v/mx*72)))+'px';
       });
     }
   });
@@ -529,14 +666,12 @@ function initPlayer(){
     }
   });
 
-  // Wrap bars in a clipPath so they reveal as the playhead sweeps left→right
   svg.innerHTML=
     '<defs><clipPath id="bclip"><rect id="clip-rect" x="'+ML+'" y="0" width="0" height="'+PH+'"/></clipPath></defs>'+
     '<g clip-path="url(#bclip)">'+barSegs+'</g>'+
     '<line id="ph" x1="'+ML+'" y1="0" x2="'+ML+'" y2="'+PH+'" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>'+
     '<rect id="ph-hit" x="0" y="0" width="'+W+'" height="'+PH+'" fill="transparent" style="cursor:pointer"/>';
 
-  // tooltip
   const tip=document.getElementById('tip');
   function ht(){tip.style.opacity='0';}
   svg.querySelectorAll('.bar-seg').forEach(el=>{
@@ -556,7 +691,6 @@ function initPlayer(){
     el.addEventListener('mouseleave',ht);
   });
 
-  // player logic
   const ph=document.getElementById('ph');
   const cr=document.getElementById('clip-rect');
   const plNum=document.getElementById('pl-num');
@@ -566,9 +700,9 @@ function initPlayer(){
   const btn=document.getElementById('pl-btn');
   const speedBtn=document.getElementById('pl-speed');
 
-  let nx=0, playing=true, rafId=null;
+  // speeds[3] = 2× — start fast by default
   const speeds=[0.25,0.5,1,2];
-  let speedIdx=0;
+  let speedIdx=3, nx=0, playing=true, rafId=null;
 
   function updateInfo(nx){
     const px=ML+nx*(W-ML-MR);
@@ -587,7 +721,8 @@ function initPlayer(){
     if(!last)last=ts;
     const dt=(ts-last)/1000;
     last=ts;
-    nx+=dt*speeds[speedIdx]*(1/Math.max(30,sess.length*2));
+    // Divisor targets ~1s per session at 1× for snappy sweep
+    nx+=dt*speeds[speedIdx]*(1/Math.max(20,sess.length));
     if(nx>=1){nx=0;}
     updateInfo(nx);
     if(playing)rafId=requestAnimationFrame(tick);
