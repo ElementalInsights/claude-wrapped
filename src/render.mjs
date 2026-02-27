@@ -71,7 +71,15 @@ export function render(stats, comparisons, config, achievements = []) {
       const mKey   = cur.toISOString().substring(0, 7);
       if (!seenMonths.has(mKey)) {
         seenMonths.add(mKey);
-        months.push({ label: mLabel, weekIdx: weeks.length - 1 });
+        // If the month starts mid-week, defer label to the next column so it
+        // doesn't sit on top of the previous month's cells.
+        const isWeekStart = weeks[weeks.length - 1].length === 0;
+        const targetIdx   = isWeekStart ? weeks.length - 1 : weeks.length;
+        // Also enforce a minimum gap so short months don't crowd each other.
+        const lastM = months[months.length - 1];
+        if (!lastM || targetIdx - lastM.weekIdx >= 3) {
+          months.push({ label: mLabel, weekIdx: targetIdx });
+        }
       }
       weeks[weeks.length - 1].push({
         date:    d,
