@@ -176,7 +176,7 @@ Do NOT split `render.mjs` into multiple files. The self-contained single-file ou
 3. **By Project** — horizontal bars per project *(hidden when ≤1 project)*
 4. **The Context Pulse** — SVG bar chart; bars reveal via clipPath as playhead sweeps, default 2× speed
 5. **Put in Perspective** — 5 comparison cards
-6. **Achievements** — 12 Steam-style Bronze/Silver/Gold/Platinum cards vs community baselines; all 12 always shown (locked = dimmed); click any card → tier breakdown popup
+6. **Achievements** — 12 Steam-style Bronze/Silver/Gold/Platinum cards vs community baselines; all 12 always shown (locked = dimmed); click any card → tier breakdown popup; **"📊 Share benchmark data"** button → modal with markdown table + clipboard copy + GitHub Discussion link + Canvas share card download
 7. **Coding Rhythm** — GitHub activity calendar + hour heatmap + day-of-week bars + personality badge *(hidden when no timestamps)*
 8. **Top Tool Calls + Most Edited Files** — two-column list
 9. **Author card** *(hidden when `--author` not set)*
@@ -206,6 +206,7 @@ Edit **`bin/cli.mjs`** only.
 - **Do not write to `~/.claude/` or any user data directory.** Read only. Output only goes to the `--out` directory.
 - **Do not assume `.jsonl` lines are well-formed.** Wrap JSON.parse calls in try/catch. Malformed lines should be skipped, not crash the tool.
 - **Do not expose real file/project names by default.** Redaction (`redact: true`) is the default. Only disable with explicit `--no-redact`.
+- **Do not use `\n` or `\'` inside JS strings that live inside the template literal.** The template literal consumes one level of escaping — `\n` becomes a literal newline in the HTML, breaking the inline JS. Use `\\n` to get `\n` in the output, or assign `const NL='\\n'` and concatenate. Same rule for apostrophes: use double-quoted strings or `\\u0027` instead of `\'`.
 
 ---
 

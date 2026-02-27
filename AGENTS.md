@@ -174,7 +174,7 @@ export const linesWrittenComparisons = [
 3. **By Project** — horizontal bars per project with 4 stats *(hidden when ≤1 project)*
 4. **The Context Pulse** — SVG bar chart; bars reveal via clipPath as playhead sweeps (default 2× speed)
 5. **Put in Perspective** — 5 comparison cards (lines → novels, resets → countries, etc.)
-6. **Achievements** — 12 Steam-style Bronze/Silver/Gold/Platinum cards; all always shown (locked = dimmed); click → tier popup modal
+6. **Achievements** — 12 Steam-style Bronze/Silver/Gold/Platinum cards; all always shown (locked = dimmed); click → tier popup modal; "📊 Share benchmark data" button → markdown copy + GitHub Discussion link + Canvas PNG share card download
 7. **Coding Rhythm** — GitHub activity calendar + hour heatmap + day-of-week bars + personality badge *(hidden when no timestamp data)*
 8. **Top Tool Calls + Most Edited Files** — two-column list cards
 9. **Author card** *(hidden when `--author` not set)*

@@ -142,7 +142,19 @@ Baselines are estimates from public developer AI usage data (2026). They'll impr
 
 ### Contributing benchmark data
 
-The thresholds in `src/benchmarks.mjs` are educated guesses. Real community data would make them meaningful. If you want to help calibrate them, open a GitHub Discussion with your anonymised stats (run `node bin/cli.mjs --list` to see session counts, then share the numbers from your generated page). PRs to update the `BASELINES` object with sourced data are very welcome.
+The thresholds in `src/benchmarks.mjs` are educated guesses. Real community data would make them meaningful.
+
+**The easiest way to contribute:**
+
+1. Generate your wrapped page (`node bin/cli.mjs --out ./wrapped`)
+2. Open `wrapped/index.html` in a browser
+3. Scroll to **Achievements** and click **📊 Share benchmark data**
+4. Click **Copy to clipboard**
+5. Click **Open GitHub Discussion →** and paste your data as a reply
+
+That's it. The modal generates an anonymous markdown table with 14 aggregate counts — no filenames, no project names, no conversation content. Just numbers like sessions, resets, lines written, compute hours.
+
+Once enough data is collected, thresholds in `src/benchmarks.mjs` and the `BASELINES` object will be updated. PRs with sourced data are welcome too.
 
 ---
 
