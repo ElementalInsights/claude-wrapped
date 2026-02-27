@@ -711,8 +711,8 @@ if(document.getElementById('ach-section')){
     document.getElementById('am-baseline').textContent = data.baseline;
     const statEl = document.getElementById('am-your-stat');
     statEl.innerHTML = data.unlocked
-      ? 'Your score: <strong>'+data.stat+'</strong>'
-      : 'Not yet unlocked — here\'s what you need:';
+      ? "Your score: <strong>"+data.stat+"</strong>"
+      : "Not yet unlocked \u2014 here's what you need:";
 
     const tiersEl = document.getElementById('am-tiers');
     tiersEl.innerHTML = '';
