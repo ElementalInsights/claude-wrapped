@@ -403,7 +403,6 @@ footer a:hover{color:var(--text)}
     <div class="sm-actions">
       <button class="sm-btn sm-btn-copy" id="sm-copy-btn">📋 Copy</button>
       <button class="sm-btn sm-btn-secondary" id="sm-discuss-btn">💬 Discussion</button>
-      <button class="sm-btn sm-btn-secondary" id="sm-card-btn">🖼️ Share card</button>
       <span class="sm-copied" id="sm-copied">Copied!</span>
     </div>
   </div>
@@ -422,7 +421,10 @@ footer a:hover{color:var(--text)}
       <div class="stat"><div class="stat-val p" id="s5">0</div><div class="stat-lbl">Lines Written</div></div>
     </div>
     <div class="pill" id="pill0"><span>${comparisons[0].emoji} ${comparisons[0].compare}</span></div>
-    <div><button class="hero-share-btn" id="share-bench-btn">📊 Share benchmark data</button></div>
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="hero-share-btn" id="share-bench-btn">📊 Share benchmark data</button>
+      <button class="hero-share-btn" id="hero-card-btn">🖼️ Download share card</button>
+    </div>
   </div>
 </section>
 
@@ -818,7 +820,7 @@ if(document.getElementById('ach-section')){
   const shareBtn      = document.getElementById('share-bench-btn');
   const copyBtn       = document.getElementById('sm-copy-btn');
   const discussBtn    = document.getElementById('sm-discuss-btn');
-  const cardBtn       = document.getElementById('sm-card-btn');
+  const heroCCardBtn  = document.getElementById('hero-card-btn');
   const copiedLabel   = document.getElementById('sm-copied');
   const codeBlock     = document.getElementById('sm-code-block');
 
@@ -981,7 +983,7 @@ if(document.getElementById('ach-section')){
     return canvas;
   }
 
-  cardBtn.addEventListener('click',()=>{
+  heroCCardBtn.addEventListener('click',()=>{
     const a=document.createElement('a');
     a.download='claude-wrapped.png';
     a.href=drawShareCard().toDataURL('image/png');
