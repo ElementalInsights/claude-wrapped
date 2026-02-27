@@ -121,7 +121,7 @@ For multi-project via config, use `--pick` flags on the CLI (repeatable flags ar
 
 ## Achievements
 
-Seven Steam-style achievements unlock automatically when your stats clear community benchmarks.
+Twelve Steam-style achievements unlock automatically when your stats clear community benchmarks. All 12 are always shown — locked ones appear dimmed. Click any card for the full tier breakdown.
 
 | Achievement | What unlocks it | Tiers |
 |-------------|-----------------|-------|
@@ -132,8 +132,17 @@ Seven Steam-style achievements unlock automatically when your stats clear commun
 | The Siege | Resets in one session | 10 / 20 / 40 / 75 |
 | Daily Driver | Active days ratio | 40% / 55% / 70% / 86% |
 | Deep Thinker | Longest single AI turn | 5 / 15 / 30 / 60 min |
+| The Polyglot | Unique file extensions | 5 / 10 / 15 / 20 |
+| Session Marathon | Messages in one session | 100 / 250 / 500 / 1,000 |
+| Tool Junkie | Unique Claude tools used | 5 / 8 / 11 / 14 |
+| The Editor | Total unique files edited | 25 / 100 / 300 / 1,000 |
+| The Debugger | Total API errors | 10 / 50 / 150 / 500 |
 
 Baselines are estimates from public developer AI usage data (2026). They'll improve as better benchmarks emerge.
+
+### Contributing benchmark data
+
+The thresholds in `src/benchmarks.mjs` are educated guesses. Real community data would make them meaningful. If you want to help calibrate them, open a GitHub Discussion with your anonymised stats (run `node bin/cli.mjs --list` to see session counts, then share the numbers from your generated page). PRs to update the `BASELINES` object with sourced data are very welcome.
 
 ---
 

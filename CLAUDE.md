@@ -176,7 +176,7 @@ Do NOT split `render.mjs` into multiple files. The self-contained single-file ou
 3. **By Project** — horizontal bars per project *(hidden when ≤1 project)*
 4. **The Context Pulse** — SVG bar chart; bars reveal via clipPath as playhead sweeps, default 2× speed
 5. **Put in Perspective** — 5 comparison cards
-6. **Achievements** — Steam-style Bronze/Silver/Gold/Platinum cards vs community baselines *(hidden when none unlock)*
+6. **Achievements** — 12 Steam-style Bronze/Silver/Gold/Platinum cards vs community baselines; all 12 always shown (locked = dimmed); click any card → tier breakdown popup
 7. **Coding Rhythm** — GitHub activity calendar + hour heatmap + day-of-week bars + personality badge *(hidden when no timestamps)*
 8. **Top Tool Calls + Most Edited Files** — two-column list
 9. **Author card** *(hidden when `--author` not set)*

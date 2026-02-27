@@ -114,7 +114,7 @@ package.json          Zero runtime deps. "type": "module".
 |------|---------|
 | New comparison threshold | `src/comparisons.mjs` only |
 | New comparison metric | `src/comparisons.mjs` + `src/analyze.mjs` + `src/render.mjs` |
-| New achievement | `src/benchmarks.mjs` — add a `push(tier(...), {...})` call in `getAchievements()` |
+| New achievement | `src/benchmarks.mjs` — add a `push(rawValue, thresholds, {...})` call in `getAchievements()`; add stat to `src/analyze.mjs` if needed |
 | New template section | `src/render.mjs` (HTML + CSS + JS all inline) |
 | New stat or aggregate | `src/analyze.mjs` → add to returned stats object |
 | New CLI flag | `bin/cli.mjs` arg parser → pass through config |
@@ -174,7 +174,7 @@ export const linesWrittenComparisons = [
 3. **By Project** — horizontal bars per project with 4 stats *(hidden when ≤1 project)*
 4. **The Context Pulse** — SVG bar chart; bars reveal via clipPath as playhead sweeps (default 2× speed)
 5. **Put in Perspective** — 5 comparison cards (lines → novels, resets → countries, etc.)
-6. **Achievements** — Steam-style Bronze/Silver/Gold/Platinum cards vs community baselines *(hidden when none unlock)*
+6. **Achievements** — 12 Steam-style Bronze/Silver/Gold/Platinum cards; all always shown (locked = dimmed); click → tier popup modal
 7. **Coding Rhythm** — GitHub activity calendar + hour heatmap + day-of-week bars + personality badge *(hidden when no timestamp data)*
 8. **Top Tool Calls + Most Edited Files** — two-column list cards
 9. **Author card** *(hidden when `--author` not set)*
