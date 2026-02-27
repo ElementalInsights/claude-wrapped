@@ -5,15 +5,27 @@ export function render(stats, comparisons, config) {
           avgTurnMs, maxTurnMs, spanDays, firstDay, lastDay,
           topTools, topFiles, spikeSession, slim } = stats;
 
+  const projects       = stats.projects       || [];
+  const messagesByHour = stats.messagesByHour || new Array(24).fill(0);
+  const messagesByDow  = stats.messagesByDow  || new Array(7).fill(0);
+
   const projectName = config.project || 'My Project';
   const author      = config.author  || '';
   const tagline     = config.tagline || `${sessionCount} sessions. ${totalCompacts} context resets. ${totalLines.toLocaleString()} lines written.`;
   const avgTurnMin  = (avgTurnMs / 60000).toFixed(1);
   const maxTurnMin  = (maxTurnMs / 60000).toFixed(1);
 
-  const dateRange = firstDay && lastDay
-    ? `${firstDay} → ${lastDay}`
-    : '';
+  const dateRange = firstDay && lastDay ? `${firstDay} → ${lastDay}` : '';
+
+  // Pre-compute for new sections
+  const maxHourVal    = Math.max(...messagesByHour, 1);
+  const maxDowVal     = Math.max(...messagesByDow, 1);
+  const peakHour      = messagesByHour.indexOf(Math.max(...messagesByHour));
+  const peakDow       = messagesByDow.indexOf(Math.max(...messagesByDow));
+  const dowNames      = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const peakHourLabel = peakHour === 0 ? '12am' : peakHour < 12 ? peakHour + 'am' : peakHour === 12 ? '12pm' : (peakHour - 12) + 'pm';
+  const maxProjMsgs   = projects.length ? Math.max(...projects.map(p => p.messages), 1) : 1;
+  const projColors    = ['var(--green)','var(--cyan)','var(--yellow)','var(--purple)','var(--pink)','#34d399','#f97316','#60a5fa'];
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -72,7 +84,7 @@ h1 span{color:var(--green)}
 @media(max-width:768px){.grid-3{grid-template-columns:repeat(2,1fr)}.stats-row{flex-wrap:wrap}}
 @media(max-width:480px){.grid-3,.grid-2{grid-template-columns:1fr}}
 
-/* STAT CARDS (Your Average Day equivalent) */
+/* STAT CARDS */
 .day-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:22px;position:relative;overflow:hidden}
 .day-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--c,var(--green))}
 .day-emoji{font-size:22px;margin-bottom:12px}
@@ -111,6 +123,34 @@ h1 span{color:var(--green)}
 .pulse-legend{display:flex;flex-wrap:wrap;gap:14px;align-items:center;padding:14px 28px;border-top:1px solid var(--border)}
 .pleg{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace}
 .pleg i{display:inline-block;width:10px;height:10px;border-radius:2px}
+
+/* BY PROJECT */
+.proj-row{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 22px;margin-bottom:10px}
+.proj-row:last-child{margin-bottom:0}
+.proj-row-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;flex-wrap:wrap;gap:8px}
+.proj-row-name{font-size:15px;font-weight:600;font-family:'SF Mono','Cascadia Code',monospace;color:var(--text)}
+.proj-row-msgs{font-size:13px;color:var(--muted)}
+.proj-bar-track{height:5px;background:var(--border);border-radius:3px;margin-bottom:16px}
+.proj-bar-fill{height:100%;border-radius:3px;width:0;transition:width 1.2s ease}
+.proj-row-stats{display:flex;gap:28px;flex-wrap:wrap}
+.proj-chip-val{font-size:18px;font-weight:700;font-family:'SF Mono','Cascadia Code',monospace;color:var(--text);display:block}
+.proj-chip-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim)}
+
+/* WHEN YOU WORK */
+.work-grid{display:grid;grid-template-columns:2fr 1fr;gap:48px;align-items:start}
+@media(max-width:768px){.work-grid{grid-template-columns:1fr}}
+.work-sub-title{font-size:11px;text-transform:uppercase;letter-spacing:.18em;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace;margin-bottom:16px}
+.hour-hmap{display:flex;gap:2px;margin-bottom:6px}
+.hcell{flex:1;height:48px;border-radius:3px;min-width:0}
+.hour-hlbls{display:flex;gap:2px}
+.hrlbl{flex:1;font-size:9px;color:var(--dim);font-family:'SF Mono','Cascadia Code',monospace;text-align:center;min-width:0;overflow:hidden}
+.work-insight{font-size:14px;color:var(--muted);margin-top:14px}
+.work-insight strong{color:var(--text)}
+.dow-chart{display:flex;gap:8px;align-items:flex-end;height:90px}
+.dow-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;min-width:0}
+.dow-cnt{font-size:9px;font-family:'SF Mono','Cascadia Code',monospace;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center}
+.dow-bar{width:100%;border-radius:3px 3px 0 0;background:var(--cyan);height:0;transition:height .8s ease;flex-shrink:0}
+.dow-lbl{font-size:11px;font-family:'SF Mono','Cascadia Code',monospace;color:var(--dim)}
 
 /* AUTHOR CARD */
 .author-section{border-top:1px solid var(--border);padding:56px 0}
@@ -195,11 +235,41 @@ footer a:hover{color:var(--text)}
   </div>
 </section>
 
+${projects.length > 1 ? `
+<section class="section" id="proj-section" style="padding-top:0;border-top:1px solid var(--border)">
+  <div class="container-wide">
+    <div class="section-eyebrow">By Project</div>
+    <div class="section-title">Where the effort went</div>
+    <div class="section-desc">Each project's share of your total output.</div>
+    ${projects.map((p, i) => {
+      const pct = Math.round(p.messages / maxProjMsgs * 100);
+      const col = projColors[i % projColors.length];
+      const displayName = p.name.replace(/^C--/, '').replace(/-/g, ' ');
+      return `
+    <div class="proj-row reveal">
+      <div class="proj-row-head">
+        <span class="proj-row-name">${displayName}</span>
+        <span class="proj-row-msgs">${p.messages.toLocaleString()} messages</span>
+      </div>
+      <div class="proj-bar-track">
+        <div class="proj-bar-fill" data-w="${pct}" style="background:${col}"></div>
+      </div>
+      <div class="proj-row-stats">
+        <div><span class="proj-chip-val">${p.sessions}</span><span class="proj-chip-lbl">Sessions</span></div>
+        <div><span class="proj-chip-val">${p.compacts}</span><span class="proj-chip-lbl">Resets</span></div>
+        <div><span class="proj-chip-val">${p.lines.toLocaleString()}</span><span class="proj-chip-lbl">Lines</span></div>
+        <div><span class="proj-chip-val">${p.computeHrs}h</span><span class="proj-chip-lbl">Compute</span></div>
+      </div>
+    </div>`;
+    }).join('')}
+  </div>
+</section>` : ''}
+
 <section class="section" style="background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border)">
   <div class="container-wide">
     <div class="section-eyebrow">The Context Pulse</div>
     <div class="section-title">Every reset, visualised</div>
-    <div class="section-desc">Each bar is one session. Height = number of context resets. Click to scrub through.</div>
+    <div class="section-desc">Each bar is one session. Height = number of context resets. Bars reveal as the playhead sweeps.</div>
     <div class="player" id="player-wrap">
       <div class="player-top">
         <div class="player-info">
@@ -251,7 +321,53 @@ footer a:hover{color:var(--text)}
   </div>
 </section>
 
-<section class="section" style="padding-top:0">
+${messagesByHour.some(v => v > 0) ? `
+<section class="section" id="work-section" style="padding-top:0;border-top:1px solid var(--border)">
+  <div class="container-wide">
+    <div class="section-eyebrow">When You Work</div>
+    <div class="section-title">Your coding rhythm</div>
+    <div class="section-desc">Session activity by hour of day and day of week.</div>
+    <div class="work-grid">
+      <div>
+        <div class="work-sub-title">Hour of Day</div>
+        <div class="hour-hmap">
+          ${messagesByHour.map((v, h) => {
+            const pct = v / maxHourVal;
+            const bg  = v === 0
+              ? 'rgba(30,34,53,0.6)'
+              : `rgba(16,185,129,${(0.12 + pct * 0.85).toFixed(2)})`;
+            return `<div class="hcell" style="background:${bg}" title="${h < 12 ? (h || 12) + 'am' : (h === 12 ? '12pm' : (h - 12) + 'pm')} · ${v.toLocaleString()} msgs"></div>`;
+          }).join('')}
+        </div>
+        <div class="hour-hlbls">
+          ${Array.from({length: 24}, (_, h) => {
+            const label = h % 6 === 0
+              ? (h === 0 ? '12am' : h < 12 ? h + 'am' : h === 12 ? '12pm' : (h - 12) + 'pm')
+              : '';
+            return `<span class="hrlbl">${label}</span>`;
+          }).join('')}
+        </div>
+        <div class="work-insight">Peak hour: <strong>${peakHourLabel}</strong></div>
+      </div>
+      <div>
+        <div class="work-sub-title">Day of Week</div>
+        <div class="dow-chart" id="dow-chart">
+          ${dowNames.map((day, i) => {
+            const v = messagesByDow[i] || 0;
+            return `<div class="dow-col">
+              <div class="dow-cnt">${v > 0 ? v.toLocaleString() : ''}</div>
+              <div class="dow-bar" data-h="${v}"></div>
+              <div class="dow-lbl">${day}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="work-insight" style="margin-top:16px">Busiest day: <strong>${dowNames[peakDow]}</strong></div>
+      </div>
+    </div>
+  </div>
+</section>` : ''}
+
+<section class="section" style="padding-top:0${messagesByHour.some(v => v > 0) ? '' : ';border-top:1px solid var(--border)'}">
   <div class="container-wide">
     <div class="grid-2">
       <div class="list-card">
@@ -306,28 +422,29 @@ window.addEventListener('scroll',()=>{
 });
 
 // count-up
-function cu(id,val,dec){
-  const el=document.getElementById(id),o={v:0};
-  gsap.to(o,{v:val,duration:2.4,delay:.5,ease:'power2.out',
-    onUpdate(){el.textContent=dec?o.v.toFixed(dec):Math.round(o.v).toLocaleString();}});
-}
-cu('s1',${sessionCount});
-cu('s2',${totalMessages});
-cu('s3',${totalCompacts});
-cu('s4',${totalGB},2);
-cu('s5',${totalLines});
+gsap.from('#s1',{textContent:0,duration:1.8,ease:'power2.out',snap:{textContent:1},scrollTrigger:{trigger:'.hero',start:'top 80%',once:true},
+  onUpdate:function(){document.getElementById('s1').textContent=Math.round(this.targets()[0]._gsap.textContent).toLocaleString()}});
+const nums=[
+  {id:'s1',val:${sessionCount}},{id:'s2',val:${totalMessages}},{id:'s3',val:${totalCompacts}},
+  {id:'s4',val:${totalGB},dec:2},{id:'s5',val:${totalLines}}
+];
+nums.forEach(({id,val,dec=0})=>{
+  gsap.to(document.getElementById(id),{duration:1.8,ease:'power2.out',
+    onUpdate:function(){
+      const p=this.progress();
+      const v=val*p;
+      document.getElementById(id).textContent=dec?v.toFixed(dec):Math.round(v).toLocaleString();
+    },
+    scrollTrigger:{trigger:'.hero',start:'top 80%',once:true}
+  });
+});
+gsap.fromTo('#pill0',{opacity:0,y:12},{opacity:1,y:0,duration:.7,delay:.6,ease:'power2.out',
+  scrollTrigger:{trigger:'.hero',start:'top 80%',once:true}});
 
-// hero entrance
-gsap.from('.eyebrow',{opacity:0,y:12,duration:.6,delay:.2});
-gsap.from('h1',      {opacity:0,y:20,duration:.7,delay:.3});
-gsap.from('.hero-sub',{opacity:0,y:16,duration:.6,delay:.4});
-gsap.from('.stats-row',{opacity:0,y:20,duration:.6,delay:.5});
-gsap.from('#pill0',  {opacity:0,y:12,duration:.6,delay:1,ease:'power2.out'});
-
-// card groups
-[{sel:'#day-grid',ease:'back.out(1.5)',y:44,scale:.95,stagger:.1},
- {sel:'#cmp-grid',ease:'back.out(1.4)',y:40,scale:.96,stagger:.08}]
-.forEach(({sel,ease,y,scale,stagger})=>{
+// group reveals
+[{sel:'#day-grid',y:32,scale:1,stagger:.08,ease:'power3.out'},
+ {sel:'#cmp-grid',y:28,scale:.97,stagger:.1,ease:'back.out(1.4)'}
+].forEach(({sel,y,scale,stagger,ease})=>{
   const g=document.querySelector(sel);
   if(!g)return;
   gsap.fromTo(g.querySelectorAll('.reveal'),
@@ -342,6 +459,34 @@ document.querySelectorAll('.reveal').forEach(el=>{
   gsap.to(el,{opacity:1,y:0,duration:.6,ease:'power2.out',
     scrollTrigger:{trigger:el,start:'top 88%',once:true}});
 });
+
+// ── Project bars ─────────────────────────────────────────────────────────────
+if(document.getElementById('proj-section')){
+  ScrollTrigger.create({
+    trigger:'#proj-section',start:'top 80%',once:true,
+    onEnter:()=>{
+      document.querySelectorAll('.proj-bar-fill').forEach(el=>{
+        el.style.width=(el.dataset.w||'0')+'%';
+      });
+    }
+  });
+}
+
+// ── Day-of-week bars ─────────────────────────────────────────────────────────
+if(document.getElementById('work-section')){
+  ScrollTrigger.create({
+    trigger:'#work-section',start:'top 80%',once:true,
+    onEnter:()=>{
+      const bars=document.querySelectorAll('.dow-bar');
+      const vals=Array.from(bars).map(el=>+(el.dataset.h||0));
+      const mx=Math.max(...vals,1);
+      bars.forEach(el=>{
+        const v=+(el.dataset.h||0);
+        el.style.height=(v===0?2:Math.max(4,Math.round(v/mx*80)))+'px';
+      });
+    }
+  });
+}
 
 // ── Pulse player ────────────────────────────────────────────────────────────
 function initPlayer(){
@@ -367,12 +512,12 @@ function initPlayer(){
   const FULL_H=(PH-MT-4)*0.95;
   const SEG_GAP=1;
 
-  let bars='';
+  let barSegs='';
   sess.forEach((s,i)=>{
     const x=ML+i*PW;
     const sw=PW-GAP;
     if(s.compacts===0){
-      bars+='<rect x="'+x+'" y="'+(yBase-4)+'" width="'+sw+'" height="4" fill="#334155" opacity="0.4"/>';
+      barSegs+='<rect x="'+x+'" y="'+(yBase-4)+'" width="'+sw+'" height="4" fill="#334155" opacity="0.4"/>';
       return;
     }
     const col=barColor(s.compacts);
@@ -380,14 +525,16 @@ function initPlayer(){
     for(let j=0;j<s.compacts;j++){
       const sy=(yBase-FULL_H)+j*(segH+SEG_GAP);
       const op=j%2===0?'0.85':'0.55';
-      bars+='<rect class="bar-seg" data-i="'+i+'" x="'+x+'" y="'+sy+'" width="'+sw+'" height="'+segH+'" fill="'+col+'" opacity="'+op+'" style="cursor:pointer"/>';
+      barSegs+='<rect class="bar-seg" data-i="'+i+'" x="'+x+'" y="'+sy+'" width="'+sw+'" height="'+segH+'" fill="'+col+'" opacity="'+op+'" style="cursor:pointer"/>';
     }
   });
 
-  // playhead
-  bars+='<line id="ph" x1="'+ML+'" y1="0" x2="'+ML+'" y2="'+PH+'" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>';
-  bars+='<rect id="ph-hit" x="0" y="0" width="'+W+'" height="'+PH+'" fill="transparent" style="cursor:pointer"/>';
-  svg.innerHTML=bars;
+  // Wrap bars in a clipPath so they reveal as the playhead sweeps left→right
+  svg.innerHTML=
+    '<defs><clipPath id="bclip"><rect id="clip-rect" x="'+ML+'" y="0" width="0" height="'+PH+'"/></clipPath></defs>'+
+    '<g clip-path="url(#bclip)">'+barSegs+'</g>'+
+    '<line id="ph" x1="'+ML+'" y1="0" x2="'+ML+'" y2="'+PH+'" stroke="rgba(255,255,255,0.7)" stroke-width="1.5"/>'+
+    '<rect id="ph-hit" x="0" y="0" width="'+W+'" height="'+PH+'" fill="transparent" style="cursor:pointer"/>';
 
   // tooltip
   const tip=document.getElementById('tip');
@@ -411,6 +558,7 @@ function initPlayer(){
 
   // player logic
   const ph=document.getElementById('ph');
+  const cr=document.getElementById('clip-rect');
   const plNum=document.getElementById('pl-num');
   const plResets=document.getElementById('pl-resets');
   const plSize=document.getElementById('pl-size');
@@ -431,6 +579,7 @@ function initPlayer(){
     plSize.textContent=s.sizeMB||0;
     plMsgs.textContent=(s.msgs||0).toLocaleString();
     ph.setAttribute('x1',px);ph.setAttribute('x2',px);
+    if(cr) cr.setAttribute('width',Math.max(0,px-ML));
   }
 
   let last=null;

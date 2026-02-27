@@ -1,5 +1,5 @@
 // analyze.mjs — compute aggregate stats from sessions array
-export function analyze(sessions) {
+export function analyze(sessions, { projectSessions = [] } = {}) {
   const totalMessages   = sessions.reduce((s, x) => s + x.userMessages + x.assistantMessages, 0);
   const totalCompacts   = sessions.reduce((s, x) => s + x.compacts, 0);
   const totalBytes      = sessions.reduce((s, x) => s + x.fileSizeBytes, 0);
@@ -63,6 +63,41 @@ export function analyze(sessions) {
     start:    s.startTime,
   }));
 
+  // ── Per-project breakdown ─────────────────────────────────────────────────
+  const projects = projectSessions.length > 1
+    ? projectSessions
+        .map(({ name, sessions: ps }) => {
+          const msgs   = ps.reduce((s, x) => s + x.userMessages + x.assistantMessages, 0);
+          const resets = ps.reduce((s, x) => s + x.compacts, 0);
+          const lines  = ps.reduce((s, x) => s + x.linesWritten, 0);
+          const cmMs   = ps.flatMap(x => x.turnDurations).reduce((a, b) => a + b, 0);
+          const tmap   = {};
+          for (const s of ps) for (const [k, v] of Object.entries(s.toolCalls)) tmap[k] = (tmap[k] || 0) + v;
+          const topTool = Object.entries(tmap).sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+          return { name, sessions: ps.length, messages: msgs, compacts: resets, lines, computeHrs: +(cmMs / 3600000).toFixed(1), topTool };
+        })
+        .sort((a, b) => b.messages - a.messages)
+    : [];
+
+  // ── Time-of-day distribution (from session start times) ──────────────────
+  const messagesByHour = new Array(24).fill(0);
+  for (const s of sessions) {
+    if (s.startTime) {
+      const h = new Date(s.startTime).getHours();
+      messagesByHour[h] += (s.userMessages + s.assistantMessages);
+    }
+  }
+
+  // ── Day-of-week distribution (Mon=0 … Sun=6) ─────────────────────────────
+  const messagesByDow = new Array(7).fill(0);
+  for (const s of sessions) {
+    if (s.startTime) {
+      const d   = new Date(s.startTime).getDay(); // 0=Sun
+      const mon = (d + 6) % 7;                    // shift to Mon=0
+      messagesByDow[mon] += (s.userMessages + s.assistantMessages);
+    }
+  }
+
   return {
     sessionCount:  sessions.length,
     totalMessages,
@@ -88,5 +123,8 @@ export function analyze(sessions) {
       slug:     spikeSession?.slug || '',
     },
     slim,
+    projects,
+    messagesByHour,
+    messagesByDow,
   };
 }

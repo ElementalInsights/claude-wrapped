@@ -129,10 +129,12 @@ if (multiSessions.length > 0) {
 // Load all sessions
 console.log(`\n  Loading sessions...`);
 let allSessions = [];
+const projectSessions = [];
 for (const dir of sessionsDirs) {
   try {
     const sessions = await loadProject(dir);
     allSessions = allSessions.concat(sessions);
+    projectSessions.push({ name: dir.split(/[/\\]/).pop(), sessions });
     process.stdout.write(`  ✓ ${dir.split(/[/\\]/).pop()} — ${sessions.length} sessions\n`);
   } catch (e) {
     process.stdout.write(`  ✗ ${dir.split(/[/\\]/).pop()} — skipped (${e.message})\n`);
@@ -154,7 +156,7 @@ config.project = config.project || 'My Project';
 
 // Analyze + render
 console.log(`\n  Analyzing ${allSessions.length} sessions...`);
-const stats       = analyze(allSessions);
+const stats       = analyze(allSessions, { projectSessions });
 const comparisons = getComparisons(stats);
 
 console.log(`  Rendering...`);
